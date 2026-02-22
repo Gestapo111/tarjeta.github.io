@@ -842,7 +842,7 @@ async function descargarPDF() {
     const element = document.querySelector('.card');
 
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 1.5,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
@@ -850,7 +850,7 @@ async function descargarPDF() {
     });
 
     // Letter size in mm: 215.9 x 279.4
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter', compress: true });
 
     const pageW = 215.9;
     const pageH = 279.4;
@@ -874,8 +874,9 @@ async function descargarPDF() {
     const offsetX = margin + (availW - drawW) / 2;
     const offsetY = margin + (availH - drawH) / 2;
 
-    const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData, 'PNG', offsetX, offsetY, drawW, drawH);
+    // Use JPEG at 82% quality — much lighter than PNG with barely visible difference
+    const imgData = canvas.toDataURL('image/jpeg', 0.82);
+    pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH, undefined, 'FAST');
 
     // Filename: full student name, normalized (no accents, no special chars)
     const rawNombre   = document.getElementById('nombre_alumno').value.trim();
