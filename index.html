@@ -57,101 +57,58 @@
     position: relative;
     overflow: hidden;
   }
-
   .card-header::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
     background: rgba(255,255,255,0.06);
   }
   .card-header::after {
-    content: '';
-    position: absolute;
-    bottom: -30px; left: 30%;
-    width: 220px; height: 220px;
-    border-radius: 50%;
+    content: ''; position: absolute; bottom: -30px; left: 30%;
+    width: 220px; height: 220px; border-radius: 50%;
     background: rgba(255,255,255,0.04);
   }
 
-  .holes {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 8%;
-    margin-bottom: 1.2rem;
-  }
+  .holes { display: flex; justify-content: space-between; padding: 0 8%; margin-bottom: 1.2rem; }
   .hole {
-    width: 22px; height: 22px;
-    border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: rgba(255,255,255,0.18);
     border: 1.5px solid rgba(255,255,255,0.35);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
   }
 
   .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.2rem;
-    position: relative;
-    z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    gap: 1.2rem; position: relative; z-index: 1;
   }
 
   .logo-seal {
-    width: 58px; height: 58px;
-    border-radius: 50%;
+    width: 58px; height: 58px; border-radius: 50%;
     background: rgba(255,255,255,0.15);
     border: 2px solid rgba(255,255,255,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-
   .logo-seal svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 1.8; }
 
   .header-text { text-align: center; }
-
   .header-text h1 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 0.07em;
-    color: var(--white);
-    text-transform: uppercase;
-    line-height: 1.35;
+    font-size: 1rem; font-weight: 800; letter-spacing: 0.07em;
+    color: var(--white); text-transform: uppercase; line-height: 1.35;
     text-shadow: 0 1px 4px rgba(0,0,0,0.2);
   }
-
   .header-text .district {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.76rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.8);
-    margin-top: 0.3rem;
-    text-transform: uppercase;
+    font-size: 0.76rem; font-weight: 400; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.8); margin-top: 0.3rem; text-transform: uppercase;
   }
 
-  .title-badge {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.4rem;
-    position: relative;
-    z-index: 1;
-  }
+  .title-badge { display: flex; justify-content: center; margin-top: 1.4rem; position: relative; z-index: 1; }
   .title-badge span {
-    background: white;
-    color: var(--blue-dark);
+    background: white; color: var(--blue-dark);
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 800;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 0.45rem 2.2rem;
-    border-radius: 50px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    font-size: 0.88rem; font-weight: 800; letter-spacing: 0.2em;
+    text-transform: uppercase; padding: 0.45rem 2.2rem;
+    border-radius: 50px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
   }
 
   /* ── BODY ── */
@@ -162,50 +119,66 @@
     border-left: 4px solid var(--blue-mid);
     border-radius: 0 6px 6px 0;
     padding: 0.9rem 1.2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.8rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; margin-bottom: 1.8rem;
   }
 
   .field { display: flex; flex-direction: column; gap: 3px; }
-
   .field label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--blue-mid);
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue-mid);
   }
-
   .field input, .field textarea {
-    background: transparent;
-    border: none;
-    border-bottom: 1.5px solid var(--line);
-    outline: none;
+    background: transparent; border: none;
+    border-bottom: 1.5px solid var(--line); outline: none;
     font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem;
-    color: var(--ink);
-    padding: 3px 2px 5px;
+    font-size: 0.92rem; color: var(--ink); padding: 3px 2px 5px;
     transition: border-color 0.25s, background 0.25s;
   }
-
   .field input:focus, .field textarea:focus {
     border-bottom-color: var(--focus);
     background: rgba(30,136,229,0.04);
   }
+  .field input[readonly] { cursor: default; }
+
+  /* Clickable field trigger */
+  .field-trigger {
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .field-trigger label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue-mid);
+  }
+  .input-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1.5px solid var(--line);
+    padding: 3px 2px 5px;
+    cursor: pointer;
+    transition: border-color 0.25s;
+  }
+  .input-btn:hover { border-bottom-color: var(--blue-mid); }
+  .input-btn input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.92rem; color: var(--ink);
+    cursor: pointer;
+  }
+  .input-btn .icon-btn {
+    background: var(--blue-mid); color: white;
+    border: none; border-radius: 50%;
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .input-btn .icon-btn:hover { background: var(--blue-dark); }
 
   .section-label {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--blue-mid);
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--blue-mid);
     border-bottom: 2px solid var(--blue-pale);
-    padding-bottom: 0.3rem;
-    margin-bottom: 1rem;
-    margin-top: 1.6rem;
+    padding-bottom: 0.3rem; margin-bottom: 1rem; margin-top: 1.6rem;
   }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
@@ -213,26 +186,17 @@
 
   .textarea-field { margin-bottom: 1.2rem; }
   .textarea-field label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--blue-mid);
-    display: block;
-    margin-bottom: 0.35rem;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue-mid);
+    display: block; margin-bottom: 0.35rem;
   }
   .textarea-field textarea {
     width: 100%;
     background: var(--blue-pale);
-    border: 1.5px solid #c5d8f0;
-    border-radius: 6px;
-    outline: none;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem;
-    color: var(--ink);
-    padding: 0.6rem 0.8rem;
-    resize: none;
-    min-height: 78px;
+    border: 1.5px solid #c5d8f0; border-radius: 6px;
+    outline: none; font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.92rem; color: var(--ink);
+    padding: 0.6rem 0.8rem; resize: none; min-height: 78px;
     transition: border-color 0.25s, box-shadow 0.25s;
   }
   .textarea-field textarea:focus {
@@ -240,83 +204,213 @@
     box-shadow: 0 0 0 3px rgba(30,136,229,0.12);
   }
 
-  .signatures {
-    margin-top: 1.8rem;
+  /* Motivo trigger */
+  .motivo-trigger-wrap { margin-bottom: 1.2rem; }
+  .motivo-trigger-wrap label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue-mid);
+    display: block; margin-bottom: 0.35rem;
+  }
+  .motivo-display {
+    width: 100%;
     background: var(--blue-pale);
-    border-radius: 8px;
-    padding: 1.4rem 1.6rem;
+    border: 1.5px solid #c5d8f0; border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.92rem; color: var(--ink);
+    min-height: 78px;
+    cursor: pointer;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .motivo-display:hover {
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(30,136,229,0.10);
+  }
+  .motivo-display .motivo-text { flex: 1; white-space: pre-wrap; line-height: 1.5; }
+  .motivo-display .motivo-text.placeholder { color: #9db8d8; font-style: italic; }
+  .motivo-display .edit-icon {
+    background: var(--blue-mid); color: white; border-radius: 50%;
+    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0; margin-top: 2px;
   }
 
+  /* Signatures */
+  .signatures {
+    margin-top: 1.8rem; background: var(--blue-pale);
+    border-radius: 8px; padding: 1.4rem 1.6rem;
+  }
   .sig-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--blue-mid);
-    margin-bottom: 1.1rem;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--blue-mid); margin-bottom: 1.1rem;
   }
-
   .sig-row {
-    display: grid;
-    grid-template-columns: 1.7fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.1rem;
-    align-items: end;
+    display: grid; grid-template-columns: 1.7fr 1fr;
+    gap: 1.5rem; margin-bottom: 1.1rem; align-items: end;
   }
   .sig-row:last-child { margin-bottom: 0; }
 
+  /* Buttons */
   .actions {
-    display: flex;
-    gap: 0.8rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    display: flex; gap: 0.8rem; justify-content: flex-end;
+    margin-top: 2rem; padding-top: 1.5rem;
     border-top: 1.5px solid var(--blue-pale);
   }
-
   .btn {
     padding: 0.6rem 1.6rem;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-radius: 50px;
-    border: none;
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+    border-radius: 50px; border: none;
   }
-
-  .btn-outline {
-    background: transparent;
-    border: 2px solid var(--line);
-    color: var(--ink-light);
-  }
+  .btn-outline { background: transparent; border: 2px solid var(--line); color: var(--ink-light); }
   .btn-outline:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
-
-  .btn-print {
-    background: transparent;
-    border: 2px solid var(--blue-mid);
-    color: var(--blue-mid);
-  }
+  .btn-print { background: transparent; border: 2px solid var(--blue-mid); color: var(--blue-mid); }
   .btn-print:hover { background: var(--blue-pale); }
-
+  .btn-pdf { background: transparent; border: 2px solid #e65100; color: #e65100; }
+  .btn-pdf:hover { background: #fff3e0; }
+  .btn-pdf.loading { opacity: 0.6; cursor: wait; }
   .btn-primary {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
-    color: white;
-    box-shadow: 0 4px 14px rgba(21,101,192,0.35);
+    color: white; box-shadow: 0 4px 14px rgba(21,101,192,0.35);
   }
-  .btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(21,101,192,0.45);
-    transform: translateY(-1px);
+  .btn-primary:hover { box-shadow: 0 6px 20px rgba(21,101,192,0.45); transform: translateY(-1px); }
+
+  /* ══════════════════════════════════════════
+     MODAL BASE
+  ══════════════════════════════════════════ */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,36,99,0.45); backdrop-filter: blur(4px);
+    z-index: 1000; align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.active { display: flex; animation: overlayIn 0.2s ease; }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: white; border-radius: 14px;
+    box-shadow: 0 24px 80px rgba(10,36,99,0.3);
+    width: 100%; max-width: 520px;
+    max-height: 85vh; display: flex; flex-direction: column;
+    animation: modalIn 0.3s cubic-bezier(.22,.68,0,1.2);
+    overflow: hidden;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .modal-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem; font-weight: 800;
+    letter-spacing: 0.1em; text-transform: uppercase; color: white;
+  }
+  .modal-close {
+    background: rgba(255,255,255,0.2); border: none; color: white;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.35); }
+
+  .modal-search {
+    padding: 0.9rem 1.2rem; border-bottom: 1px solid #e8eef6; flex-shrink: 0;
+  }
+  .modal-search input {
+    width: 100%; background: var(--blue-pale);
+    border: 1.5px solid #c5d8f0; border-radius: 8px;
+    outline: none; font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9rem; color: var(--ink); padding: 0.5rem 0.8rem;
+    transition: border-color 0.25s;
+  }
+  .modal-search input:focus { border-color: var(--focus); }
+
+  .modal-body { overflow-y: auto; flex: 1; padding: 0.5rem; }
+
+  /* Student list */
+  .student-item {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.75rem 1rem; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s;
+    border-bottom: 1px solid #f0f4fa;
+  }
+  .student-item:hover { background: var(--blue-pale); }
+  .student-item:last-child { border-bottom: none; }
+
+  .student-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--blue-pale); color: var(--blue-mid);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .student-info { flex: 1; }
+  .student-name {
+    font-size: 0.88rem; font-weight: 600; color: var(--ink); line-height: 1.2;
+  }
+  .student-nie {
+    font-size: 0.75rem; color: var(--ink-light); margin-top: 1px;
+  }
+  .student-item:hover .student-num { background: var(--blue-mid); color: white; }
+  .selected-row { background: var(--blue-pale) !important; }
+
+  /* Motivo list */
+  .motivo-item {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 0.85rem 1rem; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s;
+    border-bottom: 1px solid #f0f4fa;
+  }
+  .motivo-item:hover { background: var(--blue-pale); }
+  .motivo-item:last-child { border-bottom: none; }
+  .motivo-item.selected { background: #dbeeff; }
+
+  .motivo-letter {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--blue-dark); color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .motivo-item.selected .motivo-letter { background: var(--blue-light); }
+  .motivo-text-label {
+    flex: 1; font-size: 0.88rem; color: var(--ink); line-height: 1.4;
+  }
+  .motivo-check {
+    width: 18px; height: 18px; border: 2px solid var(--line);
+    border-radius: 4px; flex-shrink: 0; margin-top: 3px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .motivo-item.selected .motivo-check {
+    background: var(--blue-mid); border-color: var(--blue-mid); color: white;
+  }
+  .motivo-check::after { content: '✓'; font-size: 11px; opacity: 0; }
+  .motivo-item.selected .motivo-check::after { opacity: 1; }
+
+  .modal-footer {
+    padding: 0.9rem 1.2rem; border-top: 1px solid #e8eef6;
+    display: flex; justify-content: flex-end; gap: 0.6rem; flex-shrink: 0;
   }
 
   @media print {
     body { background: white; padding: 0; }
     .card { box-shadow: none; border-radius: 0; }
     .card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .actions { display: none; }
+    .actions, .modal-overlay { display: none !important; }
+    .input-btn .icon-btn, .edit-icon { display: none; }
   }
 
   @media (max-width: 580px) {
@@ -330,113 +424,440 @@
 <div class="wrapper">
   <div class="card">
 
+    <!-- HEADER -->
     <div class="card-header">
-      <div class="holes">
-        <div class="hole"></div>
-        <div class="hole"></div>
-      </div>
+      <div class="holes"><div class="hole"></div><div class="hole"></div></div>
       <div class="header-content">
         <div class="logo-seal">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke-linejoin="round"/>
-            <path d="M2 17l10 5 10-5" stroke-linejoin="round"/>
-            <path d="M2 12l10 5 10-5" stroke-linejoin="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke-linejoin="round"/></svg>
         </div>
         <div class="header-text">
           <h1>Ministerio de Educación,<br>Ciencia y Tecnología</h1>
           <p class="district">Distrito 06-14 &nbsp;·&nbsp; Panchimalco, San Salvador Sur</p>
         </div>
       </div>
-      <div class="title-badge">
-        <span>Tarjeta de Demérito</span>
-      </div>
+      <div class="title-badge"><span>Tarjeta de Demérito</span></div>
     </div>
 
+    <!-- BODY -->
     <div class="card-body">
 
+      <!-- Institución -->
       <div class="inst-strip">
         <div class="field">
           <label>Institución</label>
-          <input type="text" name="institucion">
+          <input type="text" id="institucion" value="COMPLEJO EDUCATIVO CANTÓN SAN ISIDRO" readonly>
         </div>
         <div class="field">
           <label>Código</label>
-          <input type="text" name="codigo">
+          <input type="text" id="codigo" value="70056" readonly>
         </div>
       </div>
 
+      <!-- Datos del alumno -->
       <div class="section-label">Datos del Alumno/A</div>
       <div class="grid-2" style="margin-bottom:1.2rem">
-        <div class="field">
+        <div class="field-trigger">
           <label>Nombre</label>
-          <input type="text" name="nombre_alumno">
+          <div class="input-btn" onclick="abrirModalEstudiante()">
+            <input type="text" id="nombre_alumno" placeholder="Seleccionar estudiante..." readonly>
+            <button class="icon-btn" type="button" title="Seleccionar">👤</button>
+          </div>
         </div>
         <div class="field">
           <label>Apellido</label>
-          <input type="text" name="apellido_alumno">
+          <input type="text" id="apellido_alumno" readonly placeholder="—">
         </div>
       </div>
       <div class="grid-3">
         <div class="field">
           <label>NIE</label>
-          <input type="text" name="nie">
+          <input type="text" id="nie" readonly placeholder="—">
         </div>
         <div class="field">
           <label>Grado / Sección</label>
-          <input type="text" name="grado_seccion">
+          <input type="text" id="grado_seccion" value="1° Año General" readonly>
         </div>
         <div class="field">
           <label>Fecha</label>
-          <input type="date" name="fecha">
+          <input type="date" id="fecha">
         </div>
       </div>
 
+      <!-- Motivo -->
       <div class="section-label">Detalle del Demérito</div>
-      <div class="textarea-field">
+      <div class="motivo-trigger-wrap">
         <label>Motivo del Demérito</label>
-        <textarea name="motivo" rows="3" placeholder="Describa el motivo..."></textarea>
-      </div>
-      <div class="textarea-field">
-        <label>Observación del Docente</label>
-        <textarea name="observacion" rows="3" placeholder="Observaciones adicionales..."></textarea>
+        <div class="motivo-display" onclick="abrirModalMotivo()">
+          <span class="motivo-text placeholder" id="motivo_display">Toca para seleccionar el motivo…</span>
+          <span class="edit-icon">✏️</span>
+        </div>
+        <input type="hidden" id="motivo_valor">
       </div>
 
+      <div class="textarea-field">
+        <label>Observación del Docente</label>
+        <textarea id="observacion" rows="3" placeholder="Observaciones adicionales..."></textarea>
+      </div>
+
+      <!-- Firmas -->
       <div class="signatures">
         <div class="sig-title">Firmas y Responsables</div>
         <div class="sig-row">
-          <div class="field"><label>Nombre Docente</label><input type="text" name="nombre_docente"></div>
-          <div class="field"><label>Firma</label><input type="text" name="firma_docente"></div>
+          <div class="field-trigger">
+            <label>Nombre Docente</label>
+            <div class="input-btn" onclick="abrirModalDocente()">
+              <input type="text" id="nombre_docente" placeholder="Seleccionar docente..." readonly>
+              <button class="icon-btn" type="button" title="Seleccionar">🎓</button>
+            </div>
+          </div>
+          <div class="field"><label>Firma</label><input type="text" id="firma_docente"></div>
         </div>
         <div class="sig-row">
-          <div class="field"><label>Nombre Alumno</label><input type="text" name="nombre_alumno_firma"></div>
-          <div class="field"><label>Firma</label><input type="text" name="firma_alumno"></div>
+          <div class="field"><label>Nombre Alumno</label><input type="text" id="nombre_alumno_firma" readonly></div>
+          <div class="field"><label>Firma</label><input type="text" id="firma_alumno"></div>
         </div>
         <div class="sig-row">
-          <div class="field"><label>Nombre Responsable</label><input type="text" name="nombre_responsable"></div>
-          <div class="field"><label>Firma</label><input type="text" name="firma_responsable"></div>
+          <div class="field"><label>Nombre Responsable</label><input type="text" id="nombre_responsable"></div>
+          <div class="field"><label>Firma</label><input type="text" id="firma_responsable"></div>
         </div>
       </div>
 
       <div class="actions">
-        <button class="btn btn-outline" onclick="document.querySelectorAll('input,textarea').forEach(el=>el.value='')">Limpiar</button>
+        <button class="btn btn-outline" onclick="limpiar()">Limpiar</button>
         <button class="btn btn-print" onclick="window.print()">🖨 Imprimir</button>
+        <button class="btn btn-pdf" onclick="descargarPDF()" id="btnPDF">📄 PDF Carta</button>
         <button class="btn btn-primary" onclick="guardar()">Guardar</button>
       </div>
+    </div>
+  </div>
+</div>
 
+<!-- ══ MODAL ESTUDIANTE ══ -->
+<div class="modal-overlay" id="modalEstudiante">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Seleccionar Estudiante</h2>
+      <button class="modal-close" onclick="cerrarModal('modalEstudiante')">✕</button>
+    </div>
+    <div class="modal-search">
+      <input type="text" id="buscarEstudiante" placeholder="🔍  Buscar por nombre o NIE..." oninput="filtrarEstudiantes()">
+    </div>
+    <div class="modal-body" id="listaEstudiantes"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL DOCENTE ══ -->
+<div class="modal-overlay" id="modalDocente">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h2>Seleccionar Docente</h2>
+      <button class="modal-close" onclick="cerrarModal('modalDocente')">✕</button>
+    </div>
+    <div class="modal-body" id="listaDocentes"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL MOTIVO ══ -->
+<div class="modal-overlay" id="modalMotivo">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Motivo del Demérito</h2>
+      <button class="modal-close" onclick="cerrarModal('modalMotivo')">✕</button>
+    </div>
+    <div class="modal-body" id="listaMotivos"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarModal('modalMotivo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarMotivo()">Confirmar</button>
     </div>
   </div>
 </div>
 
 <script>
+// ── DATOS ESTUDIANTES ──
+const estudiantes = [
+  { no: 1,  nie: "10192638", nombre: "CAROLINA LISSETH",    apellido: "ACOSTA DEODANES" },
+  { no: 2,  nie: "20085229", nombre: "CESAR ISMAEL",        apellido: "AGUILAR ORTIZ" },
+  { no: 3,  nie: "20085270", nombre: "OSCAR EFRAIN",        apellido: "BENITEZ PEREZ" },
+  { no: 4,  nie: "20085307", nombre: "RUTH NOEMY",          apellido: "CARRILLO VENTURA" },
+  { no: 5,  nie: "19933288", nombre: "JAZMIN SARAI",        apellido: "CASTRO ORTIZ" },
+  { no: 6,  nie: "20008551", nombre: "PAMELA GUADALUPE",    apellido: "CORNEJO ORTIZ" },
+  { no: 7,  nie: "19933292", nombre: "JHAMILTON GEOVANY",   apellido: "CRUZ GARCÍA" },
+  { no: 8,  nie: "10380636", nombre: "JUANA ELENA",         apellido: "CRUZ VEGA" },
+  { no: 9,  nie: "20085334", nombre: "DAVID ALEXANDER",     apellido: "DEODANES JORGE" },
+  { no: 10, nie: "20161320", nombre: "CARLOS DANIEL",       apellido: "DEODANES PÉREZ" },
+  { no: 11, nie: "19933320", nombre: "WILLIAN LEONEL",      apellido: "DEODANES RODRIGUEZ" },
+  { no: 12, nie: "20161321", nombre: "KATHERIN MARITZA",    apellido: "DEODANES SANTOS" },
+  { no: 13, nie: "20116603", nombre: "XAVIER ERNESTO",      apellido: "JORGE BENITEZ" },
+  { no: 14, nie: "20116605", nombre: "JEFFERSON ALEXIS",    apellido: "LEON RODRIGUEZ" },
+  { no: 15, nie: "20116607", nombre: "MANUEL ENRIQUE",      apellido: "MARTINEZ PEREZ" },
+  { no: 16, nie: "20116608", nombre: "ANDERSON MAURICIO",   apellido: "MARTINEZ VASQUEZ" },
+  { no: 17, nie: "20161327", nombre: "JOSÉ BRYAN",          apellido: "MARTÍNEZ MIRANDA" },
+  { no: 18, nie: "20116614", nombre: "JORGE ERNESTO",       apellido: "MENDEZ PEREZ" },
+  { no: 19, nie: "19964662", nombre: "JOSELYN ROXANA",      apellido: "ORTIZ MARTÍNEZ" },
+  { no: 20, nie: "20116635", nombre: "ROSIBEL",             apellido: "PEREZ JACINTO" },
+  { no: 21, nie: "19964672", nombre: "ISAÍAS ARMANDO",      apellido: "PÉREZ DEODANES" },
+  { no: 22, nie: "20116666", nombre: "DORIS ESTEFANNY",     apellido: "VASQUEZ BENITES" },
+  { no: 23, nie: "20116669", nombre: "NELSON ANTONIO",      apellido: "VASQUEZ MARTINEZ" },
+  { no: 24, nie: "20116683", nombre: "SERGIO JAVIER",       apellido: "VENITES RODRIGUEZ" },
+];
+
+// ── DATOS MOTIVOS ──
+const motivos = [
+  { letra: "A", texto: "No saludar al entrar o al salir del aula." },
+  { letra: "B", texto: "Omitir \"Por favor\" al hacer una petición." },
+  { letra: "C", texto: "Omitir \"Gracias\" al recibir un favor, material o atención." },
+  { letra: "D", texto: "Usar un tono grosero o irrespetuoso hacia compañeros, docentes o personal." },
+  { letra: "E", texto: "Porta su uniforme de forma incorrecta." },
+  { letra: "F", texto: "El corte de cabello no es francesa Oscura o Clara." },
+  { letra: "G", texto: "No cumple con los acuerdos de grado." },
+];
+
+// ── DATOS DOCENTES ──
+const docentes = [
+  "Carlos Alberto Ramirez",
+  "Sujey Paniagua",
+  "Jaime Castaneda",
+  "Juan Isabel Umanzor",
+  "Mario López",
+  "Mauricio Melara",
+  "Mario León",
+];
+
+// ── MODAL DOCENTE ──
+function abrirModalDocente() {
+  renderDocentes();
+  document.getElementById('modalDocente').classList.add('active');
+}
+
+function renderDocentes() {
+  const container = document.getElementById('listaDocentes');
+  const actual = document.getElementById('nombre_docente').value;
+  container.innerHTML = docentes.map((d, i) => `
+    <div class="student-item ${actual === d ? 'selected-row' : ''}" onclick="seleccionarDocente('${d.replace(/'/g,"\\'")}')">
+      <div class="student-num">${i + 1}</div>
+      <div class="student-info">
+        <div class="student-name">${d}</div>
+      </div>
+      ${actual === d ? '<span style="color:var(--blue-mid);font-size:1rem;">✓</span>' : ''}
+    </div>
+  `).join('');
+}
+
+function seleccionarDocente(nombre) {
+  document.getElementById('nombre_docente').value = nombre;
+  cerrarModal('modalDocente');
+}
+
+
+
+let motivoSeleccionado = null;
+
+
+function abrirModalEstudiante() {
+  document.getElementById('buscarEstudiante').value = '';
+  renderEstudiantes(estudiantes);
+  document.getElementById('modalEstudiante').classList.add('active');
+  setTimeout(() => document.getElementById('buscarEstudiante').focus(), 100);
+}
+
+function filtrarEstudiantes() {
+  const q = document.getElementById('buscarEstudiante').value.toLowerCase();
+  const filtrados = estudiantes.filter(e =>
+    e.nombre.toLowerCase().includes(q) ||
+    e.apellido.toLowerCase().includes(q) ||
+    e.nie.includes(q)
+  );
+  renderEstudiantes(filtrados);
+}
+
+function renderEstudiantes(lista) {
+  const container = document.getElementById('listaEstudiantes');
+  if (lista.length === 0) {
+    container.innerHTML = '<p style="padding:1.5rem;text-align:center;color:#9db8d8;font-size:0.88rem;">No se encontraron resultados</p>';
+    return;
+  }
+  container.innerHTML = lista.map(e => `
+    <div class="student-item" onclick="seleccionarEstudiante(${e.no})">
+      <div class="student-num">${e.no}</div>
+      <div class="student-info">
+        <div class="student-name">${e.apellido}, ${e.nombre}</div>
+        <div class="student-nie">NIE: ${e.nie}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function seleccionarEstudiante(no) {
+  const e = estudiantes.find(x => x.no === no);
+  if (!e) return;
+  document.getElementById('nombre_alumno').value = e.nombre;
+  document.getElementById('apellido_alumno').value = e.apellido;
+  document.getElementById('nie').value = e.nie;
+  document.getElementById('nombre_alumno_firma').value = e.apellido + ', ' + e.nombre;
+  cerrarModal('modalEstudiante');
+}
+
+// ── MODAL MOTIVO ──
+function abrirModalMotivo() {
+  renderMotivos();
+  document.getElementById('modalMotivo').classList.add('active');
+}
+
+function renderMotivos() {
+  const container = document.getElementById('listaMotivos');
+  container.innerHTML = motivos.map(m => `
+    <div class="motivo-item ${motivoSeleccionado === m.letra ? 'selected' : ''}" onclick="toggleMotivo('${m.letra}')">
+      <div class="motivo-letter">${m.letra}</div>
+      <div class="motivo-text-label">${m.texto}</div>
+      <div class="motivo-check"></div>
+    </div>
+  `).join('');
+}
+
+function toggleMotivo(letra) {
+  motivoSeleccionado = (motivoSeleccionado === letra) ? null : letra;
+  renderMotivos();
+}
+
+function confirmarMotivo() {
+  if (!motivoSeleccionado) {
+    cerrarModal('modalMotivo');
+    return;
+  }
+  const m = motivos.find(x => x.letra === motivoSeleccionado);
+  const texto = `${m.letra}) ${m.texto}`;
+  document.getElementById('motivo_valor').value = texto;
+  const display = document.getElementById('motivo_display');
+  display.textContent = texto;
+  display.classList.remove('placeholder');
+  cerrarModal('modalMotivo');
+}
+
+// ── HELPERS ──
+function cerrarModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// Close on ESC
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+  }
+});
+
+function limpiar() {
+  ['nombre_alumno','apellido_alumno','nie','observacion',
+   'nombre_docente','firma_docente','firma_alumno',
+   'nombre_alumno_firma','nombre_responsable','firma_responsable','fecha'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  motivoSeleccionado = null;
+  document.getElementById('motivo_valor').value = '';
+  const display = document.getElementById('motivo_display');
+  display.textContent = 'Toca para seleccionar el motivo…';
+  display.classList.add('placeholder');
+}
+
 function guardar() {
-  const campos = {};
-  document.querySelectorAll('input[name], textarea[name]').forEach(el => { campos[el.name] = el.value; });
+  const campos = {
+    institucion: document.getElementById('institucion').value,
+    codigo: document.getElementById('codigo').value,
+    nombre_alumno: document.getElementById('nombre_alumno').value,
+    apellido_alumno: document.getElementById('apellido_alumno').value,
+    nie: document.getElementById('nie').value,
+    grado_seccion: document.getElementById('grado_seccion').value,
+    fecha: document.getElementById('fecha').value,
+    motivo: document.getElementById('motivo_valor').value,
+    observacion: document.getElementById('observacion').value,
+    nombre_docente: document.getElementById('nombre_docente').value,
+    nombre_alumno_firma: document.getElementById('nombre_alumno_firma').value,
+    nombre_responsable: document.getElementById('nombre_responsable').value,
+  };
   const blob = new Blob([JSON.stringify(campos, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'tarjeta_demerito.json';
   a.click();
+}
+
+// Init — set today's date
+document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+</script>
+
+<!-- PDF libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+async function descargarPDF() {
+  const btn = document.getElementById('btnPDF');
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Generando...';
+
+  // Hide action buttons and modals during capture
+  const actions = document.querySelector('.actions');
+  actions.style.visibility = 'hidden';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const element = document.querySelector('.card');
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+    });
+
+    // Letter size in mm: 215.9 x 279.4
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+    const pageW = 215.9;
+    const pageH = 279.4;
+    const margin = 12; // mm margin on each side
+
+    const availW = pageW - margin * 2;
+    const availH = pageH - margin * 2;
+
+    const imgW = canvas.width;
+    const imgH = canvas.height;
+    const ratio = imgW / imgH;
+
+    let drawW = availW;
+    let drawH = drawW / ratio;
+
+    if (drawH > availH) {
+      drawH = availH;
+      drawW = drawH * ratio;
+    }
+
+    const offsetX = margin + (availW - drawW) / 2;
+    const offsetY = margin + (availH - drawH) / 2;
+
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', offsetX, offsetY, drawW, drawH);
+
+    // Filename with student name if available
+    const alumno = document.getElementById('apellido_alumno').value || 'tarjeta';
+    const fecha = document.getElementById('fecha').value || new Date().toISOString().split('T')[0];
+    pdf.save(`demerito_${alumno}_${fecha}.pdf`);
+
+  } catch (e) {
+    alert('Error al generar PDF: ' + e.message);
+    console.error(e);
+  } finally {
+    actions.style.visibility = 'visible';
+    btn.classList.remove('loading');
+    btn.textContent = '📄 PDF Carta';
+  }
 }
 </script>
 </body>
