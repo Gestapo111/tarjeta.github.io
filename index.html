@@ -82,10 +82,12 @@
   }
 
   .logo-seal {
-    width: 58px; height: 58px; border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.5);
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    border: 2.5px solid rgba(255,255,255,0.8);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
   }
   .logo-seal svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 1.8; }
 
@@ -429,7 +431,7 @@
       <div class="holes"><div class="hole"></div><div class="hole"></div></div>
       <div class="header-content">
         <div class="logo-seal">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke-linejoin="round"/></svg>
+          <img src="https://i.postimg.cc/pT7HhC8T/Picsart-25-10-23-08-50-36-529.png" alt="Logo Institución" style="width:54px;height:54px;object-fit:contain;border-radius:50%;">
         </div>
         <div class="header-text">
           <h1>Ministerio de Educación,<br>Ciencia y Tecnología</h1>
@@ -813,6 +815,7 @@ async function descargarPDF() {
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
+      allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
     });
