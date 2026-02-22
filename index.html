@@ -407,6 +407,11 @@
     display: flex; justify-content: flex-end; gap: 0.6rem; flex-shrink: 0;
   }
 
+  @keyframes popIn {
+    from { transform: scale(0.4); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
   @media print {
     body { background: white; padding: 0; }
     .card { box-shadow: none; border-radius: 0; }
@@ -791,9 +796,33 @@ function guardar() {
   a.click();
 }
 
+function limpiarYCerrar() {
+  cerrarModal('modalConfirmPDF');
+  limpiar();
+}
+
 // Init — set today's date
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 </script>
+
+<!-- ══ MODAL CONFIRMACIÓN PDF ══ -->
+<div class="modal-overlay" id="modalConfirmPDF">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
+      <h2>Descarga Exitosa</h2>
+      <button class="modal-close" onclick="cerrarModal('modalConfirmPDF')">✕</button>
+    </div>
+    <div style="padding:2rem 1.8rem 1.2rem;text-align:center;">
+      <div style="font-size:3.5rem;margin-bottom:0.8rem;animation:popIn 0.4s cubic-bezier(.22,.68,0,1.4)">✅</div>
+      <p style="font-family:'Montserrat',sans-serif;font-size:0.95rem;font-weight:700;color:#1b5e20;margin-bottom:0.5rem;">¡PDF generado con éxito!</p>
+      <p style="font-size:0.85rem;color:var(--ink-light);line-height:1.5;" id="pdfConfirmMsg">El documento ha sido descargado a tu dispositivo.</p>
+    </div>
+    <div style="padding:0 1.8rem 1.6rem;display:flex;justify-content:center;gap:0.8rem;">
+      <button class="btn btn-outline" onclick="limpiarYCerrar()" style="border-color:#c8e6c9;color:#2e7d32;">Nueva tarjeta</button>
+      <button class="btn btn-primary" onclick="cerrarModal('modalConfirmPDF')" style="background:linear-gradient(135deg,#1b5e20,#2e7d32);box-shadow:0 4px 14px rgba(27,94,32,0.35);">Aceptar</button>
+    </div>
+  </div>
+</div>
 
 <!-- PDF libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -852,6 +881,16 @@ async function descargarPDF() {
     const alumno = document.getElementById('apellido_alumno').value || 'tarjeta';
     const fecha = document.getElementById('fecha').value || new Date().toISOString().split('T')[0];
     pdf.save(`demerito_${alumno}_${fecha}.pdf`);
+
+    // Show confirmation modal
+    const alumnoNombre = document.getElementById('nombre_alumno').value;
+    const apellidoNombre = document.getElementById('apellido_alumno').value;
+    const nombreCompleto = (alumnoNombre || apellidoNombre)
+      ? `<strong>${apellidoNombre}${alumnoNombre ? ', ' + alumnoNombre : ''}</strong>`
+      : 'el estudiante';
+    document.getElementById('pdfConfirmMsg').innerHTML =
+      `El documento de demérito de ${nombreCompleto} ha sido descargado correctamente a tu dispositivo.`;
+    document.getElementById('modalConfirmPDF').classList.add('active');
 
   } catch (e) {
     alert('Error al generar PDF: ' + e.message);
