@@ -877,10 +877,14 @@ async function descargarPDF() {
     const imgData = canvas.toDataURL('image/png');
     pdf.addImage(imgData, 'PNG', offsetX, offsetY, drawW, drawH);
 
-    // Filename with student name if available
-    const alumno = document.getElementById('apellido_alumno').value || 'tarjeta';
-    const fecha = document.getElementById('fecha').value || new Date().toISOString().split('T')[0];
-    pdf.save(`demerito_${alumno}_${fecha}.pdf`);
+    // Filename: full student name, normalized (no accents, no special chars)
+    const rawNombre   = document.getElementById('nombre_alumno').value.trim();
+    const rawApellido = document.getElementById('apellido_alumno').value.trim();
+    const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9 ]/g,'').trim().replace(/\s+/g,'_');
+    const nombreArchivo = (rawNombre || rawApellido)
+      ? normalize(`${rawApellido} ${rawNombre}`)
+      : 'Tarjeta_Demerito';
+    pdf.save(`${nombreArchivo}.pdf`);
 
     // Show confirmation modal
     const alumnoNombre = document.getElementById('nombre_alumno').value;
