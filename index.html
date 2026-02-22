@@ -842,25 +842,42 @@ async function descargarPDF() {
     const element = document.querySelector('.card');
 
     const canvas = await html2canvas(element, {
-      scale: 1.5,
+      scale: 2.5,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
     });
 
+    // Convert to grayscale for crisp black & white output
+    const grayCanvas = document.createElement('canvas');
+    grayCanvas.width  = canvas.width;
+    grayCanvas.height = canvas.height;
+    const ctx = grayCanvas.getContext('2d');
+    ctx.drawImage(canvas, 0, 0);
+    const imageData = ctx.getImageData(0, 0, grayCanvas.width, grayCanvas.height);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      // Luminosity formula — better perceived contrast than simple average
+      const gray = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+      // Boost contrast: push darks darker, lights lighter
+      const boosted = Math.round(Math.pow(gray / 255, 0.85) * 255);
+      data[i] = data[i+1] = data[i+2] = boosted;
+    }
+    ctx.putImageData(imageData, 0, 0);
+
     // Letter size in mm: 215.9 x 279.4
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter', compress: true });
 
     const pageW = 215.9;
     const pageH = 279.4;
-    const margin = 12; // mm margin on each side
+    const margin = 12;
 
     const availW = pageW - margin * 2;
     const availH = pageH - margin * 2;
 
-    const imgW = canvas.width;
-    const imgH = canvas.height;
+    const imgW = grayCanvas.width;
+    const imgH = grayCanvas.height;
     const ratio = imgW / imgH;
 
     let drawW = availW;
@@ -874,8 +891,8 @@ async function descargarPDF() {
     const offsetX = margin + (availW - drawW) / 2;
     const offsetY = margin + (availH - drawH) / 2;
 
-    // Use JPEG at 82% quality — much lighter than PNG with barely visible difference
-    const imgData = canvas.toDataURL('image/jpeg', 0.82);
+    // High quality grayscale JPEG
+    const imgData = grayCanvas.toDataURL('image/jpeg', 0.92);
     pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH, undefined, 'FAST');
 
     // Filename: full student name, normalized (no accents, no special chars)
