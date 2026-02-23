@@ -1283,7 +1283,7 @@
   <script>
     /**
      * Tarjeta de Demérito - Aplicación Mejorada
-     * Versión 2.0 - Código modular y mantenible
+     * Versión 2.0 - Texto PDF de alta calidad
      */
     
     const app = (function() {
@@ -1457,7 +1457,6 @@
         validate() {
           const errors = [];
           
-          // Validar estudiante
           if (!document.getElementById('nombre_alumno').value.trim()) {
             errors.push({ field: 'nombre', msg: 'Seleccione un estudiante' });
             this.showError('val-nombre', true);
@@ -1465,7 +1464,6 @@
             this.showError('val-nombre', false);
           }
           
-          // Validar fecha
           if (!document.getElementById('fecha').value) {
             errors.push({ field: 'fecha', msg: 'Seleccione una fecha' });
             this.showError('val-fecha', true);
@@ -1473,7 +1471,6 @@
             this.showError('val-fecha', false);
           }
           
-          // Validar motivo
           if (!document.getElementById('motivo_valor').value) {
             errors.push({ field: 'motivo', msg: 'Seleccione un motivo' });
             this.showError('val-motivo', true);
@@ -1481,7 +1478,6 @@
             this.showError('val-motivo', false);
           }
           
-          // Validar docente
           if (!document.getElementById('nombre_docente').value.trim()) {
             errors.push({ field: 'docente', msg: 'Seleccione un docente' });
             this.showError('val-docente', true);
@@ -1518,7 +1514,6 @@
           overlay.classList.add('active');
           document.body.style.overflow = 'hidden';
           
-          // Focus en input de búsqueda si existe
           const searchInput = overlay.querySelector('input[type="text"]');
           if (searchInput) {
             setTimeout(() => searchInput.focus(), 100);
@@ -1529,7 +1524,6 @@
           const overlay = document.getElementById(id);
           overlay.classList.remove('active');
           
-          // Verificar si hay otros modales abiertos
           const anyOpen = document.querySelector('.modal-overlay.active');
           if (!anyOpen) {
             document.body.style.overflow = '';
@@ -1641,7 +1635,6 @@
           document.getElementById('nie').value = student.nie;
           document.getElementById('nombre_alumno_firma').value = `${student.apellido}, ${student.nombre}`;
           
-          // Animación de éxito
           const input = document.getElementById('nombre_alumno');
           input.style.background = '#e8f5e9';
           input.style.borderColor = '#4caf50';
@@ -1691,8 +1684,6 @@
           modals.close('modalDocente');
           validator.showError('val-docente', false);
           notifications.success(`${name} seleccionado`, 'Docente');
-          
-          this.saveToHistory();
         }
       };
       
@@ -1735,54 +1726,6 @@
           modals.close('modalMotivo');
           validator.showError('val-motivo', false);
           notifications.success('Motivo seleccionado', 'Demérito');
-          
-          this.saveToHistory();
-        }
-      };
-      
-      // ==================== HISTORIAL ====================
-      
-      const historyManager = {
-        save() {
-          const data = {
-            student: state.selectedStudent,
-            teacher: state.selectedTeacher,
-            reason: state.selectedReason,
-            formData: {
-              fecha: document.getElementById('fecha').value,
-              observacion: document.getElementById('observacion').value,
-              firma_docente: document.getElementById('firma_docente').value,
-              firma_alumno: document.getElementById('firma_alumno').value,
-              nombre_responsable: document.getElementById('nombre_responsable').value,
-              firma_responsable: document.getElementById('firma_responsable').value
-            },
-            timestamp: Date.now()
-          };
-          
-          if (state.historyIndex < state.history.length - 1) {
-            state.history = state.history.slice(0, state.historyIndex + 1);
-          }
-          
-          state.history.push(data);
-          
-          if (state.history.length > CONFIG.MAX_HISTORY) {
-            state.history.shift();
-          } else {
-            state.historyIndex++;
-          }
-          
-          utils.saveToStorage(CONFIG.HISTORY_KEY, state.history);
-        },
-        
-        undo() {
-          if (state.historyIndex > 0) {
-            state.historyIndex--;
-            this.restore(state.history[state.historyIndex]);
-            notifications.info('Acción deshecha', 'Deshacer');
-            return true;
-          }
-          notifications.warning('No hay acciones para deshacer');
-          return false;
         }
       };
       
@@ -1853,7 +1796,7 @@
         }
       };
       
-      // ==================== EXPORTACIÓN ====================
+      // ==================== EXPORTACIÓN PDF CON TEXTO NEGRO ALTA CALIDAD ====================
       
       const exportManager = {
         async pdf() {
@@ -1875,45 +1818,75 @@
             const actions = document.querySelector('.actions');
             actions.style.visibility = 'hidden';
             
+            // Captura con alta resolución (3x) para máxima nitidez de texto
             const canvas = await html2canvas(element, {
-              scale: 2.5,
+              scale: 3,
               useCORS: true,
               allowTaint: true,
               backgroundColor: '#ffffff',
-              logging: false
+              logging: false,
+              imageTimeout: 0,
+              onclone: (clonedDoc) => {
+                clonedDoc.body.style.backgroundColor = '#ffffff';
+              }
             });
             
-            // Convertir a escala de grises
-            const grayCanvas = document.createElement('canvas');
-            grayCanvas.width = canvas.width;
-            grayCanvas.height = canvas.height;
-            const ctx = grayCanvas.getContext('2d');
+            // Procesamiento de imagen para texto NEGRO PURO de alta calidad
+            const processedCanvas = document.createElement('canvas');
+            processedCanvas.width = canvas.width;
+            processedCanvas.height = canvas.height;
+            const ctx = processedCanvas.getContext('2d');
+            
+            // Dibujar imagen original
             ctx.drawImage(canvas, 0, 0);
             
-            const imageData = ctx.getImageData(0, 0, grayCanvas.width, grayCanvas.height);
+            // Procesar píxeles para máximo contraste de texto negro
+            const imageData = ctx.getImageData(0, 0, processedCanvas.width, processedCanvas.height);
             const data = imageData.data;
+            
             for (let i = 0; i < data.length; i += 4) {
-              const gray = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
-              const boosted = Math.round(Math.pow(gray / 255, 0.85) * 255);
-              data[i] = data[i+1] = data[i+2] = boosted;
+              const r = data[i];
+              const g = data[i + 1];
+              const b = data[i + 2];
+              
+              // Convertir a escala de grises con fórmula de luminancia percibida
+              let gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+              
+              // Umbralización adaptativa para texto negro oscuro/nitido
+              if (gray < 180) {
+                // Si es oscuro, forzar a negro puro (0-45) para máximo contraste
+                const intensity = Math.max(0, (gray - 120) * 4);
+                gray = Math.min(intensity, 45);
+              } else {
+                // Si es claro, mantener blanco o casi blanco
+                gray = Math.min(255, gray + 20);
+              }
+              
+              data[i] = gray;     // R
+              data[i + 1] = gray; // G
+              data[i + 2] = gray; // B
             }
+            
             ctx.putImageData(imageData, 0, 0);
             
+            // Configurar PDF con calidad máxima
             const pdf = new jsPDF({ 
               orientation: 'portrait', 
               unit: 'mm', 
-              format: 'letter', 
-              compress: true 
+              format: 'letter',
+              compress: true,
+              precision: 16
             });
             
             const pageW = 215.9;
             const pageH = 279.4;
-            const margin = 12;
+            const margin = 10;
+            
             const availW = pageW - margin * 2;
             const availH = pageH - margin * 2;
             
-            const imgW = grayCanvas.width;
-            const imgH = grayCanvas.height;
+            const imgW = processedCanvas.width;
+            const imgH = processedCanvas.height;
             const ratio = imgW / imgH;
             
             let drawW = availW;
@@ -1927,8 +1900,11 @@
             const offsetX = margin + (availW - drawW) / 2;
             const offsetY = margin + (availH - drawH) / 2;
             
-            const imgData = grayCanvas.toDataURL('image/jpeg', 0.92);
-            pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH);
+            // Exportar como JPEG con calidad 100%
+            const imgData = processedCanvas.toDataURL('image/jpeg', 1.0);
+            
+            // Agregar imagen al PDF sin compresión adicional ('NONE')
+            pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH, undefined, 'NONE');
             
             // Generar nombre de archivo
             const rawNombre = document.getElementById('nombre_alumno').value.trim();
@@ -1944,11 +1920,11 @@
             modals.showConfirm(
               '¡PDF Generado!',
               'Descarga exitosa',
-              `El documento de demérito de <strong>${studentName}</strong> ha sido descargado correctamente.`,
+              `El documento de demérito de <strong>${studentName}</strong> ha sido generado con texto de alta calidad.`,
               'success',
               () => {
                 if (confirm('¿Desea limpiar el formulario para una nueva tarjeta?')) {
-                  this.clearForm();
+                  app.clearForm();
                 }
               }
             );
@@ -2001,7 +1977,7 @@
             
           } catch (error) {
             console.error('Error generating Excel:', error);
-            notifications.error('Error al generar Excel', 'Error');
+            notifications.error('Error al generar el Excel', 'Error');
           }
         }
       };
@@ -2009,23 +1985,14 @@
       // ==================== INICIALIZACIÓN ====================
       
       function init() {
-        // Establecer fecha actual
         document.getElementById('fecha').value = utils.formatDate();
-        
-        // Cargar datos guardados
         storageManager.load();
-        
-        // Event listeners
         setupEventListeners();
-        
-        // Atajos de teclado
         setupKeyboardShortcuts();
-        
         notifications.success('Sistema listo', 'Bienvenido');
       }
       
       function setupEventListeners() {
-        // Guardar automáticamente al cambiar campos de texto
         const autoSaveFields = ['observacion', 'firma_docente', 'firma_alumno', 'nombre_responsable', 'firma_responsable'];
         autoSaveFields.forEach(id => {
           document.getElementById(id)?.addEventListener('input', utils.debounce(() => {
@@ -2033,7 +2000,6 @@
           }, 1000));
         });
         
-        // Validación en tiempo real
         document.getElementById('fecha')?.addEventListener('change', () => {
           validator.showError('val-fecha', false);
           storageManager.save();
@@ -2049,21 +2015,14 @@
             document.body.style.overflow = '';
           }
           
-          // Ctrl+S: Guardar
           if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
             storageManager.save();
           }
           
-          // Ctrl+P: Imprimir
           if (e.ctrlKey && e.key === 'p') {
             e.preventDefault();
             window.print();
-          }
-          
-          // Ctrl+Z: Deshacer (si implementamos historial completo)
-          if (e.ctrlKey && e.key === 'z') {
-            // historyManager.undo();
           }
         });
       }
@@ -2110,7 +2069,6 @@
           
           storageManager.save();
           
-          // También exportar a JSON como en el código original
           const data = {
             institucion: document.getElementById('institucion').value,
             codigo: document.getElementById('codigo').value,
