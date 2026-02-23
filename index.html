@@ -1,928 +1,2185 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tarjeta de Demérito</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarjeta de Demérito - Ministerio de Educación</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
+  <style>
+    :root {
+      --blue-dark: #0a2463;
+      --blue-mid: #1565c0;
+      --blue-light: #1e88e5;
+      --blue-pale: #e3f0ff;
+      --white: #ffffff;
+      --ink: #1a2540;
+      --ink-light: #4a5568;
+      --line: #b0c4de;
+      --bg: #eaf2fb;
+      --paper: #ffffff;
+      --focus: #1e88e5;
+      --success: #1b5e20;
+      --warning: #f57c00;
+      --error: #c62828;
+      --radius: 10px;
+      --shadow-sm: 0 2px 8px rgba(10,36,99,0.08);
+      --shadow-md: 0 8px 24px rgba(10,36,99,0.12);
+      --shadow-lg: 0 16px 48px rgba(10,36,99,0.16);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-  :root {
-    --blue-dark:  #0a2463;
-    --blue-mid:   #1565c0;
-    --blue-light: #1e88e5;
-    --blue-pale:  #e3f0ff;
-    --white:      #ffffff;
-    --ink:        #1a2540;
-    --ink-light:  #4a5568;
-    --line:       #b0c4de;
-    --bg:         #eaf2fb;
-    --paper:      #ffffff;
-    --focus:      #1e88e5;
-  }
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
 
-  body {
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Source Sans 3', sans-serif;
-    padding: 2rem 1rem;
-    background-image:
-      radial-gradient(ellipse at 10% 10%, rgba(21,101,192,0.12) 0%, transparent 55%),
-      radial-gradient(ellipse at 90% 90%, rgba(10,36,99,0.10) 0%, transparent 55%);
-  }
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Source Sans 3', sans-serif;
+      padding: 2rem 1rem;
+      background-image:
+        radial-gradient(ellipse at 10% 10%, rgba(21,101,192,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 90%, rgba(10,36,99,0.10) 0%, transparent 55%);
+      color: var(--ink);
+      line-height: 1.6;
+    }
 
-  .wrapper { width: 100%; max-width: 740px; }
+    .wrapper { 
+      width: 100%; 
+      max-width: 740px; 
+    }
 
-  .card {
-    background: var(--paper);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(10,36,99,0.08), 0 16px 48px rgba(10,36,99,0.16);
-    animation: fadeIn 0.55s cubic-bezier(.22,.68,0,1.2);
-  }
+    .card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.6s cubic-bezier(0.22, 0.68, 0, 1.2);
+      position: relative;
+    }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(18px) scale(0.98); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
-  /* ── HEADER ── */
-  .card-header {
-    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 60%, var(--blue-light) 100%);
-    padding: 2rem 2.5rem 1.6rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-header::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 160px; height: 160px; border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-  }
-  .card-header::after {
-    content: ''; position: absolute; bottom: -30px; left: 30%;
-    width: 220px; height: 220px; border-radius: 50%;
-    background: rgba(255,255,255,0.04);
-  }
+    /* ── HEADER ── */
+    .card-header {
+      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 60%, var(--blue-light) 100%);
+      padding: 2rem 2.5rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card-header::before {
+      content: ''; 
+      position: absolute; 
+      top: -40px; 
+      right: -40px;
+      width: 160px; 
+      height: 160px; 
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .card-header::after {
+      content: ''; 
+      position: absolute; 
+      bottom: -30px; 
+      left: 30%;
+      width: 220px; 
+      height: 220px; 
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      animation: float 8s ease-in-out infinite reverse;
+    }
 
-  .holes { display: flex; justify-content: space-between; padding: 0 8%; margin-bottom: 1.2rem; }
-  .hole {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(255,255,255,0.18);
-    border: 1.5px solid rgba(255,255,255,0.35);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
-  }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
 
-  .header-content {
-    display: flex; align-items: center; justify-content: center;
-    gap: 1.2rem; position: relative; z-index: 1;
-  }
+    .holes { 
+      display: flex; 
+      justify-content: space-between; 
+      padding: 0 8%; 
+      margin-bottom: 1.2rem; 
+    }
+    
+    .hole {
+      width: 22px; 
+      height: 22px; 
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+      transition: var(--transition);
+    }
+    
+    .hole:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+    }
 
-  .logo-seal {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: rgba(255,255,255,0.92);
-    border: 2.5px solid rgba(255,255,255,0.8);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-  }
-  .logo-seal svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 1.8; }
+    .header-content {
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      gap: 1.2rem; 
+      position: relative; 
+      z-index: 1;
+    }
 
-  .header-text { text-align: center; }
-  .header-text h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem; font-weight: 800; letter-spacing: 0.07em;
-    color: var(--white); text-transform: uppercase; line-height: 1.35;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
-  .header-text .district {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.76rem; font-weight: 400; letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.8); margin-top: 0.3rem; text-transform: uppercase;
-  }
+    .logo-seal {
+      width: 64px; 
+      height: 64px; 
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: 2.5px solid rgba(255,255,255,0.8);
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      transition: var(--transition);
+    }
+    
+    .logo-seal:hover {
+      transform: scale(1.05) rotate(5deg);
+    }
+    
+    .logo-seal img { 
+      width: 54px; 
+      height: 54px; 
+      object-fit: contain; 
+      border-radius: 50%; 
+    }
 
-  .title-badge { display: flex; justify-content: center; margin-top: 1.4rem; position: relative; z-index: 1; }
-  .title-badge span {
-    background: white; color: var(--blue-dark);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.88rem; font-weight: 800; letter-spacing: 0.2em;
-    text-transform: uppercase; padding: 0.45rem 2.2rem;
-    border-radius: 50px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  }
+    .header-text { text-align: center; }
+    
+    .header-text h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem; 
+      font-weight: 800; 
+      letter-spacing: 0.07em;
+      color: var(--white); 
+      text-transform: uppercase; 
+      line-height: 1.35;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    
+    .header-text .district {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.76rem; 
+      font-weight: 400; 
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.8); 
+      margin-top: 0.3rem; 
+      text-transform: uppercase;
+    }
 
-  /* ── BODY ── */
-  .card-body { padding: 2rem 2.5rem 2.5rem; }
+    .title-badge { 
+      display: flex; 
+      justify-content: center; 
+      margin-top: 1.4rem; 
+      position: relative; 
+      z-index: 1; 
+    }
+    
+    .title-badge span {
+      background: white; 
+      color: var(--blue-dark);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem; 
+      font-weight: 800; 
+      letter-spacing: 0.2em;
+      text-transform: uppercase; 
+      padding: 0.45rem 2.2rem;
+      border-radius: 50px; 
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      transition: var(--transition);
+    }
+    
+    .title-badge span:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
 
-  .inst-strip {
-    background: var(--blue-pale);
-    border-left: 4px solid var(--blue-mid);
-    border-radius: 0 6px 6px 0;
-    padding: 0.9rem 1.2rem;
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1rem; margin-bottom: 1.8rem;
-  }
+    /* ── BODY ── */
+    .card-body { 
+      padding: 2rem 2.5rem 2.5rem; 
+    }
 
-  .field { display: flex; flex-direction: column; gap: 3px; }
-  .field label {
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--blue-mid);
-  }
-  .field input, .field textarea {
-    background: transparent; border: none;
-    border-bottom: 1.5px solid var(--line); outline: none;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem; color: var(--ink); padding: 3px 2px 5px;
-    transition: border-color 0.25s, background 0.25s;
-  }
-  .field input:focus, .field textarea:focus {
-    border-bottom-color: var(--focus);
-    background: rgba(30,136,229,0.04);
-  }
-  .field input[readonly] { cursor: default; }
+    .inst-strip {
+      background: linear-gradient(135deg, var(--blue-pale) 0%, #f0f7ff 100%);
+      border-left: 4px solid var(--blue-mid);
+      border-radius: 0 6px 6px 0;
+      padding: 0.9rem 1.2rem;
+      display: grid; 
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem; 
+      margin-bottom: 1.8rem;
+      transition: var(--transition);
+    }
+    
+    .inst-strip:hover {
+      box-shadow: var(--shadow-sm);
+      transform: translateX(4px);
+    }
 
-  /* Clickable field trigger */
-  .field-trigger {
-    display: flex; flex-direction: column; gap: 3px;
-  }
-  .field-trigger label {
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--blue-mid);
-  }
-  .input-btn {
-    display: flex; align-items: center; gap: 0.5rem;
-    border-bottom: 1.5px solid var(--line);
-    padding: 3px 2px 5px;
-    cursor: pointer;
-    transition: border-color 0.25s;
-  }
-  .input-btn:hover { border-bottom-color: var(--blue-mid); }
-  .input-btn input {
-    flex: 1; background: transparent; border: none; outline: none;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem; color: var(--ink);
-    cursor: pointer;
-  }
-  .input-btn .icon-btn {
-    background: var(--blue-mid); color: white;
-    border: none; border-radius: 50%;
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; cursor: pointer;
-    transition: background 0.2s;
-  }
-  .input-btn .icon-btn:hover { background: var(--blue-dark); }
+    .field { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 4px; 
+    }
+    
+    .field label {
+      font-size: 0.7rem; 
+      font-weight: 700; 
+      letter-spacing: 0.1em;
+      text-transform: uppercase; 
+      color: var(--blue-mid);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .field label .required {
+      color: var(--error);
+    }
+    
+    .field input, .field textarea {
+      background: transparent; 
+      border: none;
+      border-bottom: 2px solid var(--line); 
+      outline: none;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.92rem; 
+      color: var(--ink); 
+      padding: 6px 4px 8px;
+      transition: var(--transition);
+      width: 100%;
+    }
+    
+    .field input:focus, .field textarea:focus {
+      border-bottom-color: var(--focus);
+      background: rgba(30,136,229,0.04);
+    }
+    
+    .field input[readonly] { 
+      cursor: default; 
+      color: var(--ink-light);
+    }
+    
+    .field input.error {
+      border-bottom-color: var(--error);
+      background: rgba(198, 40, 40, 0.05);
+    }
 
-  .section-label {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--blue-mid);
-    border-bottom: 2px solid var(--blue-pale);
-    padding-bottom: 0.3rem; margin-bottom: 1rem; margin-top: 1.6rem;
-  }
+    /* Clickable field trigger */
+    .field-trigger {
+      display: flex; 
+      flex-direction: column; 
+      gap: 4px;
+    }
+    
+    .field-trigger label {
+      font-size: 0.7rem; 
+      font-weight: 700; 
+      letter-spacing: 0.1em;
+      text-transform: uppercase; 
+      color: var(--blue-mid);
+    }
+    
+    .input-btn {
+      display: flex; 
+      align-items: center; 
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--line);
+      padding: 6px 4px 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    
+    .input-btn:hover { 
+      border-bottom-color: var(--blue-mid); 
+    }
+    
+    .input-btn input {
+      flex: 1; 
+      background: transparent; 
+      border: none; 
+      outline: none;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.92rem; 
+      color: var(--ink);
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    .input-btn .icon-btn {
+      background: var(--blue-mid); 
+      color: white;
+      border: none; 
+      border-radius: 50%;
+      width: 26px; 
+      height: 26px; 
+      flex-shrink: 0;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 12px; 
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(21,101,192,0.3);
+    }
+    
+    .input-btn .icon-btn:hover { 
+      background: var(--blue-dark);
+      transform: scale(1.1);
+    }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-  .grid-3 { display: grid; grid-template-columns: 0.8fr 1.2fr 1fr; gap: 1.2rem; }
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem; 
+      font-weight: 700; 
+      letter-spacing: 0.14em;
+      text-transform: uppercase; 
+      color: var(--blue-mid);
+      border-bottom: 2px solid var(--blue-pale);
+      padding-bottom: 0.3rem; 
+      margin-bottom: 1rem; 
+      margin-top: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .textarea-field { margin-bottom: 1.2rem; }
-  .textarea-field label {
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--blue-mid);
-    display: block; margin-bottom: 0.35rem;
-  }
-  .textarea-field textarea {
-    width: 100%;
-    background: var(--blue-pale);
-    border: 1.5px solid #c5d8f0; border-radius: 6px;
-    outline: none; font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem; color: var(--ink);
-    padding: 0.6rem 0.8rem; resize: none; min-height: 78px;
-    transition: border-color 0.25s, box-shadow 0.25s;
-  }
-  .textarea-field textarea:focus {
-    border-color: var(--focus);
-    box-shadow: 0 0 0 3px rgba(30,136,229,0.12);
-  }
+    .grid-2 { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 1.2rem; 
+    }
+    
+    .grid-3 { 
+      display: grid; 
+      grid-template-columns: 0.8fr 1.2fr 1fr; 
+      gap: 1.2rem; 
+    }
 
-  /* Motivo trigger */
-  .motivo-trigger-wrap { margin-bottom: 1.2rem; }
-  .motivo-trigger-wrap label {
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--blue-mid);
-    display: block; margin-bottom: 0.35rem;
-  }
-  .motivo-display {
-    width: 100%;
-    background: var(--blue-pale);
-    border: 1.5px solid #c5d8f0; border-radius: 6px;
-    padding: 0.6rem 0.8rem;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.92rem; color: var(--ink);
-    min-height: 78px;
-    cursor: pointer;
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;
-    transition: border-color 0.25s, box-shadow 0.25s;
-    position: relative;
-  }
-  .motivo-display:hover {
-    border-color: var(--blue-mid);
-    box-shadow: 0 0 0 3px rgba(30,136,229,0.10);
-  }
-  .motivo-display .motivo-text { flex: 1; white-space: pre-wrap; line-height: 1.5; }
-  .motivo-display .motivo-text.placeholder { color: #9db8d8; font-style: italic; }
-  .motivo-display .edit-icon {
-    background: var(--blue-mid); color: white; border-radius: 50%;
-    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; flex-shrink: 0; margin-top: 2px;
-  }
+    .textarea-field { 
+      margin-bottom: 1.2rem; 
+    }
+    
+    .textarea-field label {
+      font-size: 0.7rem; 
+      font-weight: 700; 
+      letter-spacing: 0.1em;
+      text-transform: uppercase; 
+      color: var(--blue-mid);
+      display: block; 
+      margin-bottom: 0.4rem;
+    }
+    
+    .textarea-field textarea {
+      width: 100%;
+      background: var(--blue-pale);
+      border: 2px solid #c5d8f0; 
+      border-radius: 8px;
+      outline: none; 
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.92rem; 
+      color: var(--ink);
+      padding: 0.8rem 1rem; 
+      resize: vertical; 
+      min-height: 90px;
+      transition: var(--transition);
+    }
+    
+    .textarea-field textarea:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 4px rgba(30,136,229,0.12);
+    }
 
-  /* Signatures */
-  .signatures {
-    margin-top: 1.8rem; background: var(--blue-pale);
-    border-radius: 8px; padding: 1.4rem 1.6rem;
-  }
-  .sig-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--blue-mid); margin-bottom: 1.1rem;
-  }
-  .sig-row {
-    display: grid; grid-template-columns: 1.7fr 1fr;
-    gap: 1.5rem; margin-bottom: 1.1rem; align-items: end;
-  }
-  .sig-row:last-child { margin-bottom: 0; }
+    /* Motivo trigger */
+    .motivo-trigger-wrap { 
+      margin-bottom: 1.2rem; 
+    }
+    
+    .motivo-trigger-wrap label {
+      font-size: 0.7rem; 
+      font-weight: 700; 
+      letter-spacing: 0.1em;
+      text-transform: uppercase; 
+      color: var(--blue-mid);
+      display: block; 
+      margin-bottom: 0.4rem;
+    }
+    
+    .motivo-display {
+      width: 100%;
+      background: var(--blue-pale);
+      border: 2px solid #c5d8f0; 
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.92rem; 
+      color: var(--ink);
+      min-height: 90px;
+      cursor: pointer;
+      display: flex; 
+      align-items: flex-start; 
+      justify-content: space-between; 
+      gap: 0.5rem;
+      transition: var(--transition);
+      position: relative;
+    }
+    
+    .motivo-display:hover {
+      border-color: var(--blue-mid);
+      box-shadow: 0 0 0 4px rgba(30,136,229,0.10);
+      transform: translateY(-1px);
+    }
+    
+    .motivo-display .motivo-text { 
+      flex: 1; 
+      white-space: pre-wrap; 
+      line-height: 1.6; 
+    }
+    
+    .motivo-display .motivo-text.placeholder { 
+      color: #9db8d8; 
+      font-style: italic; 
+    }
+    
+    .motivo-display .edit-icon {
+      background: var(--blue-mid); 
+      color: white; 
+      border-radius: 50%;
+      width: 28px; 
+      height: 28px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 12px; 
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    
+    .motivo-display:hover .edit-icon {
+      background: var(--blue-dark);
+      transform: rotate(15deg);
+    }
 
-  /* Buttons */
-  .actions {
-    display: flex; gap: 0.8rem; justify-content: flex-end;
-    margin-top: 2rem; padding-top: 1.5rem;
-    border-top: 1.5px solid var(--blue-pale);
-  }
-  .btn {
-    padding: 0.6rem 1.6rem;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    cursor: pointer; transition: all 0.2s;
-    border-radius: 50px; border: none;
-  }
-  .btn-outline { background: transparent; border: 2px solid var(--line); color: var(--ink-light); }
-  .btn-outline:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
-  .btn-print { background: transparent; border: 2px solid var(--blue-mid); color: var(--blue-mid); }
-  .btn-print:hover { background: var(--blue-pale); }
-  .btn-pdf { background: transparent; border: 2px solid #e65100; color: #e65100; }
-  .btn-pdf:hover { background: #fff3e0; }
-  .btn-pdf.loading { opacity: 0.6; cursor: wait; }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
-    color: white; box-shadow: 0 4px 14px rgba(21,101,192,0.35);
-  }
-  .btn-primary:hover { box-shadow: 0 6px 20px rgba(21,101,192,0.45); transform: translateY(-1px); }
+    /* Signatures */
+    .signatures {
+      margin-top: 1.8rem; 
+      background: linear-gradient(135deg, var(--blue-pale) 0%, #f0f7ff 100%);
+      border-radius: 10px; 
+      padding: 1.6rem;
+      border: 2px solid transparent;
+      transition: var(--transition);
+    }
+    
+    .signatures:hover {
+      border-color: var(--line);
+    }
+    
+    .sig-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem; 
+      font-weight: 700; 
+      letter-spacing: 0.14em;
+      text-transform: uppercase; 
+      color: var(--blue-mid); 
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .sig-row {
+      display: grid; 
+      grid-template-columns: 1.7fr 1fr;
+      gap: 1.5rem; 
+      margin-bottom: 1.2rem; 
+      align-items: end;
+    }
+    
+    .sig-row:last-child { 
+      margin-bottom: 0; 
+    }
 
-  /* ══════════════════════════════════════════
-     MODAL BASE
-  ══════════════════════════════════════════ */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(10,36,99,0.45); backdrop-filter: blur(4px);
-    z-index: 1000; align-items: center; justify-content: center;
-    padding: 1rem;
-  }
-  .modal-overlay.active { display: flex; animation: overlayIn 0.2s ease; }
-  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+    /* Buttons */
+    .actions {
+      display: flex; 
+      gap: 0.8rem; 
+      justify-content: flex-end;
+      margin-top: 2rem; 
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--blue-pale);
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 0.7rem 1.8rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem; 
+      font-weight: 700;
+      letter-spacing: 0.1em; 
+      text-transform: uppercase;
+      cursor: pointer; 
+      transition: var(--transition);
+      border-radius: 50px; 
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+    
+    .btn:hover::before {
+      transform: translateX(100%);
+    }
+    
+    .btn-outline { 
+      background: transparent; 
+      border: 2px solid var(--line); 
+      color: var(--ink-light); 
+    }
+    
+    .btn-outline:hover { 
+      border-color: var(--blue-mid); 
+      color: var(--blue-mid);
+      transform: translateY(-2px);
+    }
+    
+    .btn-print { 
+      background: transparent; 
+      border: 2px solid var(--blue-mid); 
+      color: var(--blue-mid); 
+    }
+    
+    .btn-print:hover { 
+      background: var(--blue-pale);
+      transform: translateY(-2px);
+    }
+    
+    .btn-excel { 
+      background: transparent; 
+      border: 2px solid #1b5e20; 
+      color: #1b5e20; 
+    }
+    
+    .btn-excel:hover { 
+      background: #e8f5e9;
+      transform: translateY(-2px);
+    }
+    
+    .btn-pdf { 
+      background: transparent; 
+      border: 2px solid #e65100; 
+      color: #e65100; 
+    }
+    
+    .btn-pdf:hover { 
+      background: #fff3e0;
+      transform: translateY(-2px);
+    }
+    
+    .btn-pdf.loading { 
+      opacity: 0.7; 
+      cursor: wait; 
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      color: white; 
+      box-shadow: 0 4px 14px rgba(21,101,192,0.35);
+    }
+    
+    .btn-primary:hover { 
+      box-shadow: 0 6px 20px rgba(21,101,192,0.45); 
+      transform: translateY(-2px);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
 
-  .modal {
-    background: white; border-radius: 14px;
-    box-shadow: 0 24px 80px rgba(10,36,99,0.3);
-    width: 100%; max-width: 520px;
-    max-height: 85vh; display: flex; flex-direction: column;
-    animation: modalIn 0.3s cubic-bezier(.22,.68,0,1.2);
-    overflow: hidden;
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
+    /* ══════════════════════════════════════════
+       MODAL BASE
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      display: none; 
+      position: fixed; 
+      inset: 0;
+      background: rgba(10,36,99,0.5); 
+      backdrop-filter: blur(6px);
+      z-index: 1000; 
+      align-items: center; 
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active { 
+      display: flex; 
+      opacity: 1;
+    }
 
-  .modal-header {
-    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
-    padding: 1.2rem 1.5rem;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
-  }
-  .modal-header h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.88rem; font-weight: 800;
-    letter-spacing: 0.1em; text-transform: uppercase; color: white;
-  }
-  .modal-close {
-    background: rgba(255,255,255,0.2); border: none; color: white;
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px; transition: background 0.2s;
-  }
-  .modal-close:hover { background: rgba(255,255,255,0.35); }
+    .modal {
+      background: white; 
+      border-radius: 14px;
+      box-shadow: 0 24px 80px rgba(10,36,99,0.3);
+      width: 100%; 
+      max-width: 520px;
+      max-height: 85vh; 
+      display: flex; 
+      flex-direction: column;
+      transform: scale(0.92) translateY(20px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.22, 0.68, 0, 1.2);
+      overflow: hidden;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
 
-  .modal-search {
-    padding: 0.9rem 1.2rem; border-bottom: 1px solid #e8eef6; flex-shrink: 0;
-  }
-  .modal-search input {
-    width: 100%; background: var(--blue-pale);
-    border: 1.5px solid #c5d8f0; border-radius: 8px;
-    outline: none; font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.9rem; color: var(--ink); padding: 0.5rem 0.8rem;
-    transition: border-color 0.25s;
-  }
-  .modal-search input:focus { border-color: var(--focus); }
+    .modal-header {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      padding: 1.2rem 1.5rem;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    
+    .modal-header h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem; 
+      font-weight: 800;
+      letter-spacing: 0.1em; 
+      text-transform: uppercase; 
+      color: white;
+    }
+    
+    .modal-close {
+      background: rgba(255,255,255,0.2); 
+      border: none; 
+      color: white;
+      width: 32px; 
+      height: 32px; 
+      border-radius: 50%;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      cursor: pointer; 
+      font-size: 16px; 
+      transition: var(--transition);
+    }
+    
+    .modal-close:hover { 
+      background: rgba(255,255,255,0.35);
+      transform: rotate(90deg);
+    }
 
-  .modal-body { overflow-y: auto; flex: 1; padding: 0.5rem; }
+    .modal-search {
+      padding: 1rem 1.2rem; 
+      border-bottom: 1px solid #e8eef6; 
+      flex-shrink: 0;
+    }
+    
+    .modal-search input {
+      width: 100%; 
+      background: var(--blue-pale);
+      border: 2px solid #c5d8f0; 
+      border-radius: 8px;
+      outline: none; 
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.9rem; 
+      color: var(--ink); 
+      padding: 0.6rem 1rem;
+      transition: var(--transition);
+    }
+    
+    .modal-search input:focus { 
+      border-color: var(--focus);
+      box-shadow: 0 0 0 4px rgba(30,136,229,0.12);
+    }
 
-  /* Student list */
-  .student-item {
-    display: flex; align-items: center; gap: 0.8rem;
-    padding: 0.75rem 1rem; border-radius: 8px;
-    cursor: pointer; transition: background 0.15s;
-    border-bottom: 1px solid #f0f4fa;
-  }
-  .student-item:hover { background: var(--blue-pale); }
-  .student-item:last-child { border-bottom: none; }
+    .modal-body { 
+      overflow-y: auto; 
+      flex: 1; 
+      padding: 0.5rem; 
+    }
 
-  .student-num {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--blue-pale); color: var(--blue-mid);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .student-info { flex: 1; }
-  .student-name {
-    font-size: 0.88rem; font-weight: 600; color: var(--ink); line-height: 1.2;
-  }
-  .student-nie {
-    font-size: 0.75rem; color: var(--ink-light); margin-top: 1px;
-  }
-  .student-item:hover .student-num { background: var(--blue-mid); color: white; }
-  .selected-row { background: var(--blue-pale) !important; }
+    /* Student list */
+    .student-item {
+      display: flex; 
+      align-items: center; 
+      gap: 0.8rem;
+      padding: 0.9rem 1rem; 
+      border-radius: 8px;
+      cursor: pointer; 
+      transition: var(--transition);
+      border-bottom: 1px solid #f0f4fa;
+    }
+    
+    .student-item:hover { 
+      background: var(--blue-pale);
+      transform: translateX(4px);
+    }
+    
+    .student-item:last-child { 
+      border-bottom: none; 
+    }
+    
+    .student-item.selected {
+      background: #dbeeff;
+      border: 2px solid var(--blue-mid);
+    }
 
-  /* Motivo list */
-  .motivo-item {
-    display: flex; align-items: flex-start; gap: 0.8rem;
-    padding: 0.85rem 1rem; border-radius: 8px;
-    cursor: pointer; transition: background 0.15s;
-    border-bottom: 1px solid #f0f4fa;
-  }
-  .motivo-item:hover { background: var(--blue-pale); }
-  .motivo-item:last-child { border-bottom: none; }
-  .motivo-item.selected { background: #dbeeff; }
+    .student-num {
+      width: 28px; 
+      height: 28px; 
+      border-radius: 50%;
+      background: var(--blue-pale); 
+      color: var(--blue-mid);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem; 
+      font-weight: 700;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    
+    .student-item:hover .student-num { 
+      background: var(--blue-mid); 
+      color: white; 
+    }
+    
+    .student-info { 
+      flex: 1; 
+    }
+    
+    .student-name {
+      font-size: 0.9rem; 
+      font-weight: 600; 
+      color: var(--ink); 
+      line-height: 1.3;
+    }
+    
+    .student-nie {
+      font-size: 0.75rem; 
+      color: var(--ink-light); 
+      margin-top: 2px;
+    }
 
-  .motivo-letter {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--blue-dark); color: white;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.72rem; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
-  .motivo-item.selected .motivo-letter { background: var(--blue-light); }
-  .motivo-text-label {
-    flex: 1; font-size: 0.88rem; color: var(--ink); line-height: 1.4;
-  }
-  .motivo-check {
-    width: 18px; height: 18px; border: 2px solid var(--line);
-    border-radius: 4px; flex-shrink: 0; margin-top: 3px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-  .motivo-item.selected .motivo-check {
-    background: var(--blue-mid); border-color: var(--blue-mid); color: white;
-  }
-  .motivo-check::after { content: '✓'; font-size: 11px; opacity: 0; }
-  .motivo-item.selected .motivo-check::after { opacity: 1; }
+    /* Motivo list */
+    .motivo-item {
+      display: flex; 
+      align-items: flex-start; 
+      gap: 0.8rem;
+      padding: 1rem; 
+      border-radius: 8px;
+      cursor: pointer; 
+      transition: var(--transition);
+      border-bottom: 1px solid #f0f4fa;
+    }
+    
+    .motivo-item:hover { 
+      background: var(--blue-pale);
+      transform: translateX(4px);
+    }
+    
+    .motivo-item:last-child { 
+      border-bottom: none; 
+    }
+    
+    .motivo-item.selected { 
+      background: #dbeeff;
+      border: 2px solid var(--blue-mid);
+    }
 
-  .modal-footer {
-    padding: 0.9rem 1.2rem; border-top: 1px solid #e8eef6;
-    display: flex; justify-content: flex-end; gap: 0.6rem; flex-shrink: 0;
-  }
+    .motivo-letter {
+      width: 32px; 
+      height: 32px; 
+      border-radius: 50%;
+      background: var(--blue-dark); 
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem; 
+      font-weight: 800;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      flex-shrink: 0; 
+      margin-top: 2px;
+      transition: var(--transition);
+    }
+    
+    .motivo-item:hover .motivo-letter {
+      background: var(--blue-mid);
+      transform: scale(1.1);
+    }
+    
+    .motivo-item.selected .motivo-letter { 
+      background: var(--blue-light); 
+    }
+    
+    .motivo-text-label {
+      flex: 1; 
+      font-size: 0.9rem; 
+      color: var(--ink); 
+      line-height: 1.5;
+    }
+    
+    .motivo-check {
+      width: 22px; 
+      height: 22px; 
+      border: 2px solid var(--line);
+      border-radius: 6px; 
+      flex-shrink: 0; 
+      margin-top: 4px;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    .motivo-item.selected .motivo-check {
+      background: var(--blue-mid); 
+      border-color: var(--blue-mid); 
+      color: white;
+    }
+    
+    .motivo-check::after { 
+      content: '✓'; 
+      font-size: 12px; 
+      opacity: 0;
+      font-weight: bold;
+    }
+    
+    .motivo-item.selected .motivo-check::after { 
+      opacity: 1; 
+    }
 
-  @keyframes popIn {
-    from { transform: scale(0.4); opacity: 0; }
-    to   { transform: scale(1);   opacity: 1; }
-  }
+    .modal-footer {
+      padding: 1rem 1.2rem; 
+      border-top: 1px solid #e8eef6;
+      display: flex; 
+      justify-content: flex-end; 
+      gap: 0.8rem; 
+      flex-shrink: 0;
+    }
 
-  @media print {
-    body { background: white; padding: 0; }
-    .card { box-shadow: none; border-radius: 0; }
-    .card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .actions, .modal-overlay { display: none !important; }
-    .input-btn .icon-btn, .edit-icon { display: none; }
-  }
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 350px;
+    }
+    
+    .toast {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: slideInRight 0.4s ease;
+      border-left: 4px solid var(--blue-mid);
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--error); }
+    .toast.warning { border-left-color: var(--warning); }
+    
+    .toast-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    
+    .toast-content {
+      flex: 1;
+    }
+    
+    .toast-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    
+    .toast-message {
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      line-height: 1.4;
+    }
+    
+    .toast-close {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: var(--ink-light);
+      cursor: pointer;
+      padding: 2px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+    
+    .toast-close:hover {
+      background: #f0f2f5;
+      color: var(--ink);
+    }
 
-  @media (max-width: 580px) {
-    .card-body { padding: 1.5rem 1.2rem; }
-    .card-header { padding: 1.5rem 1.2rem 1.2rem; }
-    .inst-strip, .grid-2, .grid-3, .sig-row { grid-template-columns: 1fr; }
-  }
-</style>
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: currentColor;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Validation indicators */
+    .validation-msg {
+      font-size: 0.75rem;
+      color: var(--error);
+      margin-top: 4px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .validation-msg.show {
+      display: flex;
+    }
+
+    @media print {
+      body { 
+        background: white; 
+        padding: 0; 
+      }
+      .card { 
+        box-shadow: none; 
+        border-radius: 0; 
+        animation: none;
+      }
+      .card-header { 
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact; 
+      }
+      .actions, .modal-overlay, .toast-container { 
+        display: none !important; 
+      }
+      .input-btn .icon-btn, .edit-icon { 
+        display: none; 
+      }
+      .motivo-display {
+        cursor: default;
+        border: 1px solid #ddd;
+      }
+      .signatures {
+        border: 1px solid var(--line);
+      }
+    }
+
+    @media (max-width: 580px) {
+      .card-body { 
+        padding: 1.5rem 1.2rem; 
+      }
+      .card-header { 
+        padding: 1.5rem 1.2rem 1.2rem; 
+      }
+      .inst-strip, .grid-2, .grid-3, .sig-row { 
+        grid-template-columns: 1fr; 
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--blue-mid);
+    }
+  </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="card">
+  <div class="wrapper">
+    <div class="card" id="tarjetaDemerito">
 
-    <!-- HEADER -->
-    <div class="card-header">
-      <div class="holes"><div class="hole"></div><div class="hole"></div></div>
-      <div class="header-content">
-        <div class="logo-seal">
-          <img src="https://i.postimg.cc/pT7HhC8T/Picsart-25-10-23-08-50-36-529.png" alt="Logo Institución" style="width:54px;height:54px;object-fit:contain;border-radius:50%;">
-        </div>
-        <div class="header-text">
-          <h1>Ministerio de Educación,<br>Ciencia y Tecnología</h1>
-          <p class="district">Distrito 06-14 &nbsp;·&nbsp; Panchimalco, San Salvador Sur</p>
-        </div>
-      </div>
-      <div class="title-badge"><span>Tarjeta de Demérito</span></div>
-    </div>
-
-    <!-- BODY -->
-    <div class="card-body">
-
-      <!-- Institución -->
-      <div class="inst-strip">
-        <div class="field">
-          <label>Institución</label>
-          <input type="text" id="institucion" value="COMPLEJO EDUCATIVO CANTÓN SAN ISIDRO" readonly>
-        </div>
-        <div class="field">
-          <label>Código</label>
-          <input type="text" id="codigo" value="70056" readonly>
-        </div>
-      </div>
-
-      <!-- Datos del alumno -->
-      <div class="section-label">Datos del Alumno/A</div>
-      <div class="grid-2" style="margin-bottom:1.2rem">
-        <div class="field-trigger">
-          <label>Nombre</label>
-          <div class="input-btn" onclick="abrirModalEstudiante()">
-            <input type="text" id="nombre_alumno" placeholder="Seleccionar estudiante..." readonly>
-            <button class="icon-btn" type="button" title="Seleccionar">👤</button>
+      <!-- HEADER -->
+      <div class="card-header">
+        <div class="holes"><div class="hole"></div><div class="hole"></div></div>
+        <div class="header-content">
+          <div class="logo-seal">
+            <img src="https://i.postimg.cc/pT7HhC8T/Picsart-25-10-23-08-50-36-529.png" alt="Logo Institución">
+          </div>
+          <div class="header-text">
+            <h1>Ministerio de Educación,<br>Ciencia y Tecnología</h1>
+            <p class="district">Distrito 06-14 · Panchimalco, San Salvador Sur</p>
           </div>
         </div>
-        <div class="field">
-          <label>Apellido</label>
-          <input type="text" id="apellido_alumno" readonly placeholder="—">
-        </div>
-      </div>
-      <div class="grid-3">
-        <div class="field">
-          <label>NIE</label>
-          <input type="text" id="nie" readonly placeholder="—">
-        </div>
-        <div class="field">
-          <label>Grado / Sección</label>
-          <input type="text" id="grado_seccion" value="1° Año General" readonly>
-        </div>
-        <div class="field">
-          <label>Fecha</label>
-          <input type="date" id="fecha">
-        </div>
+        <div class="title-badge"><span>Tarjeta de Demérito</span></div>
       </div>
 
-      <!-- Motivo -->
-      <div class="section-label">Detalle del Demérito</div>
-      <div class="motivo-trigger-wrap">
-        <label>Motivo del Demérito</label>
-        <div class="motivo-display" onclick="abrirModalMotivo()">
-          <span class="motivo-text placeholder" id="motivo_display">Toca para seleccionar el motivo…</span>
-          <span class="edit-icon">✏️</span>
+      <!-- BODY -->
+      <div class="card-body">
+
+        <!-- Institución -->
+        <div class="inst-strip">
+          <div class="field">
+            <label>Institución</label>
+            <input type="text" id="institucion" value="COMPLEJO EDUCATIVO CANTÓN SAN ISIDRO" readonly>
+          </div>
+          <div class="field">
+            <label>Código</label>
+            <input type="text" id="codigo" value="70056" readonly>
+          </div>
         </div>
-        <input type="hidden" id="motivo_valor">
-      </div>
 
-      <div class="textarea-field">
-        <label>Observación del Docente</label>
-        <textarea id="observacion" rows="3" placeholder="Observaciones adicionales..."></textarea>
-      </div>
-
-      <!-- Firmas -->
-      <div class="signatures">
-        <div class="sig-title">Firmas y Responsables</div>
-        <div class="sig-row">
+        <!-- Datos del alumno -->
+        <div class="section-label">📋 Datos del Alumno/A</div>
+        <div class="grid-2" style="margin-bottom:1.2rem">
           <div class="field-trigger">
-            <label>Nombre Docente</label>
-            <div class="input-btn" onclick="abrirModalDocente()">
-              <input type="text" id="nombre_docente" placeholder="Seleccionar docente..." readonly>
-              <button class="icon-btn" type="button" title="Seleccionar">🎓</button>
+            <label>Nombre <span class="required">*</span></label>
+            <div class="input-btn" onclick="app.openStudentModal()">
+              <input type="text" id="nombre_alumno" placeholder="Seleccionar estudiante..." readonly>
+              <button class="icon-btn" type="button">👤</button>
+            </div>
+            <span class="validation-msg" id="val-nombre">⚠️ Seleccione un estudiante</span>
+          </div>
+          <div class="field">
+            <label>Apellido</label>
+            <input type="text" id="apellido_alumno" readonly placeholder="—">
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field">
+            <label>NIE</label>
+            <input type="text" id="nie" readonly placeholder="—">
+          </div>
+          <div class="field">
+            <label>Grado / Sección</label>
+            <input type="text" id="grado_seccion" value="1° Año General" readonly>
+          </div>
+          <div class="field">
+            <label>Fecha <span class="required">*</span></label>
+            <input type="date" id="fecha">
+            <span class="validation-msg" id="val-fecha">⚠️ Seleccione una fecha</span>
+          </div>
+        </div>
+
+        <!-- Motivo -->
+        <div class="section-label">⚠️ Detalle del Demérito</div>
+        <div class="motivo-trigger-wrap">
+          <label>Motivo del Demérito <span class="required">*</span></label>
+          <div class="motivo-display" onclick="app.openReasonModal()">
+            <span class="motivo-text placeholder" id="motivo_display">Toca para seleccionar el motivo...</span>
+            <span class="edit-icon">✏️</span>
+          </div>
+          <input type="hidden" id="motivo_valor">
+          <input type="hidden" id="motivo_letra">
+          <span class="validation-msg" id="val-motivo">⚠️ Seleccione un motivo</span>
+        </div>
+
+        <div class="textarea-field">
+          <label>Observación del Docente</label>
+          <textarea id="observacion" rows="3" placeholder="Observaciones adicionales..."></textarea>
+        </div>
+
+        <!-- Firmas -->
+        <div class="signatures">
+          <div class="sig-title">✍️ Firmas y Responsables</div>
+          <div class="sig-row">
+            <div class="field-trigger">
+              <label>Nombre Docente <span class="required">*</span></label>
+              <div class="input-btn" onclick="app.openTeacherModal()">
+                <input type="text" id="nombre_docente" placeholder="Seleccionar docente..." readonly>
+                <button class="icon-btn" type="button">🎓</button>
+              </div>
+              <span class="validation-msg" id="val-docente">⚠️ Seleccione un docente</span>
+            </div>
+            <div class="field">
+              <label>Firma</label>
+              <input type="text" id="firma_docente" placeholder="Firma digital">
             </div>
           </div>
-          <div class="field"><label>Firma</label><input type="text" id="firma_docente"></div>
+          <div class="sig-row">
+            <div class="field">
+              <label>Nombre Alumno</label>
+              <input type="text" id="nombre_alumno_firma" readonly>
+            </div>
+            <div class="field">
+              <label>Firma</label>
+              <input type="text" id="firma_alumno" placeholder="Firma del alumno">
+            </div>
+          </div>
+          <div class="sig-row">
+            <div class="field">
+              <label>Nombre Responsable</label>
+              <input type="text" id="nombre_responsable" placeholder="Padre/Madre/Encargado">
+            </div>
+            <div class="field">
+              <label>Firma</label>
+              <input type="text" id="firma_responsable" placeholder="Firma del responsable">
+            </div>
+          </div>
         </div>
-        <div class="sig-row">
-          <div class="field"><label>Nombre Alumno</label><input type="text" id="nombre_alumno_firma" readonly></div>
-          <div class="field"><label>Firma</label><input type="text" id="firma_alumno"></div>
+
+        <div class="actions">
+          <button class="btn btn-outline" onclick="app.clearForm()">🗑️ Limpiar</button>
+          <button class="btn btn-print" onclick="window.print()">🖨️ Imprimir</button>
+          <button class="btn btn-excel" onclick="app.exportExcel()">📊 Excel</button>
+          <button class="btn btn-pdf" onclick="app.exportPDF()" id="btnPDF">📄 PDF</button>
+          <button class="btn btn-primary" onclick="app.saveData()">💾 Guardar</button>
         </div>
-        <div class="sig-row">
-          <div class="field"><label>Nombre Responsable</label><input type="text" id="nombre_responsable"></div>
-          <div class="field"><label>Firma</label><input type="text" id="firma_responsable"></div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-outline" onclick="limpiar()">Limpiar</button>
-        <button class="btn btn-print" onclick="window.print()">🖨 Imprimir</button>
-        <button class="btn btn-pdf" onclick="descargarPDF()" id="btnPDF">📄 PDF Carta</button>
-        <button class="btn btn-primary" onclick="guardar()">Guardar</button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ══ MODAL ESTUDIANTE ══ -->
-<div class="modal-overlay" id="modalEstudiante">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Seleccionar Estudiante</h2>
-      <button class="modal-close" onclick="cerrarModal('modalEstudiante')">✕</button>
-    </div>
-    <div class="modal-search">
-      <input type="text" id="buscarEstudiante" placeholder="🔍  Buscar por nombre o NIE..." oninput="filtrarEstudiantes()">
-    </div>
-    <div class="modal-body" id="listaEstudiantes"></div>
-  </div>
-</div>
-
-<!-- ══ MODAL DOCENTE ══ -->
-<div class="modal-overlay" id="modalDocente">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-header">
-      <h2>Seleccionar Docente</h2>
-      <button class="modal-close" onclick="cerrarModal('modalDocente')">✕</button>
-    </div>
-    <div class="modal-body" id="listaDocentes"></div>
-  </div>
-</div>
-
-<!-- ══ MODAL MOTIVO ══ -->
-<div class="modal-overlay" id="modalMotivo">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Motivo del Demérito</h2>
-      <button class="modal-close" onclick="cerrarModal('modalMotivo')">✕</button>
-    </div>
-    <div class="modal-body" id="listaMotivos"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="cerrarModal('modalMotivo')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarMotivo()">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── DATOS ESTUDIANTES ──
-const estudiantes = [
-  { no: 1,  nie: "10192638", nombre: "CAROLINA LISSETH",    apellido: "ACOSTA DEODANES" },
-  { no: 2,  nie: "20085229", nombre: "CESAR ISMAEL",        apellido: "AGUILAR ORTIZ" },
-  { no: 3,  nie: "20085270", nombre: "OSCAR EFRAIN",        apellido: "BENITEZ PEREZ" },
-  { no: 4,  nie: "20085307", nombre: "RUTH NOEMY",          apellido: "CARRILLO VENTURA" },
-  { no: 5,  nie: "19933288", nombre: "JAZMIN SARAI",        apellido: "CASTRO ORTIZ" },
-  { no: 6,  nie: "20008551", nombre: "PAMELA GUADALUPE",    apellido: "CORNEJO ORTIZ" },
-  { no: 7,  nie: "19933292", nombre: "JHAMILTON GEOVANY",   apellido: "CRUZ GARCÍA" },
-  { no: 8,  nie: "10380636", nombre: "JUANA ELENA",         apellido: "CRUZ VEGA" },
-  { no: 9,  nie: "20085334", nombre: "DAVID ALEXANDER",     apellido: "DEODANES JORGE" },
-  { no: 10, nie: "20161320", nombre: "CARLOS DANIEL",       apellido: "DEODANES PÉREZ" },
-  { no: 11, nie: "19933320", nombre: "WILLIAN LEONEL",      apellido: "DEODANES RODRIGUEZ" },
-  { no: 12, nie: "20161321", nombre: "KATHERIN MARITZA",    apellido: "DEODANES SANTOS" },
-  { no: 13, nie: "20116603", nombre: "XAVIER ERNESTO",      apellido: "JORGE BENITEZ" },
-  { no: 14, nie: "20116605", nombre: "JEFFERSON ALEXIS",    apellido: "LEON RODRIGUEZ" },
-  { no: 15, nie: "20116607", nombre: "MANUEL ENRIQUE",      apellido: "MARTINEZ PEREZ" },
-  { no: 16, nie: "20116608", nombre: "ANDERSON MAURICIO",   apellido: "MARTINEZ VASQUEZ" },
-  { no: 17, nie: "20161327", nombre: "JOSÉ BRYAN",          apellido: "MARTÍNEZ MIRANDA" },
-  { no: 18, nie: "20116614", nombre: "JORGE ERNESTO",       apellido: "MENDEZ PEREZ" },
-  { no: 19, nie: "19964662", nombre: "JOSELYN ROXANA",      apellido: "ORTIZ MARTÍNEZ" },
-  { no: 20, nie: "20116635", nombre: "ROSIBEL",             apellido: "PEREZ JACINTO" },
-  { no: 21, nie: "19964672", nombre: "ISAÍAS ARMANDO",      apellido: "PÉREZ DEODANES" },
-  { no: 22, nie: "20116666", nombre: "DORIS ESTEFANNY",     apellido: "VASQUEZ BENITES" },
-  { no: 23, nie: "20116669", nombre: "NELSON ANTONIO",      apellido: "VASQUEZ MARTINEZ" },
-  { no: 24, nie: "20116683", nombre: "SERGIO JAVIER",       apellido: "VENITES RODRIGUEZ" },
-];
-
-// ── DATOS MOTIVOS ──
-const motivos = [
-  { letra: "A", texto: "No saludar al entrar o al salir del aula." },
-  { letra: "B", texto: "Omitir \"Por favor\" al hacer una petición." },
-  { letra: "C", texto: "Omitir \"Gracias\" al recibir un favor, material o atención." },
-  { letra: "D", texto: "Usar un tono grosero o irrespetuoso hacia compañeros, docentes o personal." },
-  { letra: "E", texto: "Porta su uniforme de forma incorrecta." },
-  { letra: "F", texto: "El corte de cabello no es francesa Oscura o Clara." },
-  { letra: "G", texto: "No cumple con los acuerdos de grado." },
-];
-
-// ── DATOS DOCENTES ──
-const docentes = [
-  "Carlos Alberto Ramirez",
-  "Sujey Paniagua",
-  "Jaime Castaneda",
-  "Juan Isabel Umanzor",
-  "Mario López",
-  "Mauricio Melara",
-  "Mario León",
-];
-
-// ── MODAL DOCENTE ──
-function abrirModalDocente() {
-  renderDocentes();
-  document.getElementById('modalDocente').classList.add('active');
-}
-
-function renderDocentes() {
-  const container = document.getElementById('listaDocentes');
-  const actual = document.getElementById('nombre_docente').value;
-  container.innerHTML = docentes.map((d, i) => `
-    <div class="student-item ${actual === d ? 'selected-row' : ''}" onclick="seleccionarDocente('${d.replace(/'/g,"\\'")}')">
-      <div class="student-num">${i + 1}</div>
-      <div class="student-info">
-        <div class="student-name">${d}</div>
+  <!-- MODAL ESTUDIANTE -->
+  <div class="modal-overlay" id="modalEstudiante" onclick="app.closeModalOnOverlay(event, 'modalEstudiante')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>👥 Seleccionar Estudiante</h2>
+        <button class="modal-close" onclick="app.closeModal('modalEstudiante')">✕</button>
       </div>
-      ${actual === d ? '<span style="color:var(--blue-mid);font-size:1rem;">✓</span>' : ''}
+      <div class="modal-search">
+        <input type="text" id="buscarEstudiante" placeholder="Buscar por nombre o NIE..." oninput="app.filterStudents()">
+      </div>
+      <div class="modal-body" id="listaEstudiantes"></div>
     </div>
-  `).join('');
-}
+  </div>
 
-function seleccionarDocente(nombre) {
-  document.getElementById('nombre_docente').value = nombre;
-  cerrarModal('modalDocente');
-}
+  <!-- MODAL DOCENTE -->
+  <div class="modal-overlay" id="modalDocente" onclick="app.closeModalOnOverlay(event, 'modalDocente')">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <h2>🎓 Seleccionar Docente</h2>
+        <button class="modal-close" onclick="app.closeModal('modalDocente')">✕</button>
+      </div>
+      <div class="modal-body" id="listaDocentes"></div>
+    </div>
+  </div>
 
-
-
-let motivoSeleccionado = null;
-
-
-function abrirModalEstudiante() {
-  document.getElementById('buscarEstudiante').value = '';
-  renderEstudiantes(estudiantes);
-  document.getElementById('modalEstudiante').classList.add('active');
-  setTimeout(() => document.getElementById('buscarEstudiante').focus(), 100);
-}
-
-function filtrarEstudiantes() {
-  const q = document.getElementById('buscarEstudiante').value.toLowerCase();
-  const filtrados = estudiantes.filter(e =>
-    e.nombre.toLowerCase().includes(q) ||
-    e.apellido.toLowerCase().includes(q) ||
-    e.nie.includes(q)
-  );
-  renderEstudiantes(filtrados);
-}
-
-function renderEstudiantes(lista) {
-  const container = document.getElementById('listaEstudiantes');
-  if (lista.length === 0) {
-    container.innerHTML = '<p style="padding:1.5rem;text-align:center;color:#9db8d8;font-size:0.88rem;">No se encontraron resultados</p>';
-    return;
-  }
-  container.innerHTML = lista.map(e => `
-    <div class="student-item" onclick="seleccionarEstudiante(${e.no})">
-      <div class="student-num">${e.no}</div>
-      <div class="student-info">
-        <div class="student-name">${e.apellido}, ${e.nombre}</div>
-        <div class="student-nie">NIE: ${e.nie}</div>
+  <!-- MODAL MOTIVO -->
+  <div class="modal-overlay" id="modalMotivo" onclick="app.closeModalOnOverlay(event, 'modalMotivo')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>⚠️ Motivo del Demérito</h2>
+        <button class="modal-close" onclick="app.closeModal('modalMotivo')">✕</button>
+      </div>
+      <div class="modal-body" id="listaMotivos"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="app.closeModal('modalMotivo')">Cancelar</button>
+        <button class="btn btn-primary" onclick="app.confirmReason()">Confirmar</button>
       </div>
     </div>
-  `).join('');
-}
+  </div>
 
-function seleccionarEstudiante(no) {
-  const e = estudiantes.find(x => x.no === no);
-  if (!e) return;
-  document.getElementById('nombre_alumno').value = e.nombre;
-  document.getElementById('apellido_alumno').value = e.apellido;
-  document.getElementById('nie').value = e.nie;
-  document.getElementById('nombre_alumno_firma').value = e.apellido + ', ' + e.nombre;
-  cerrarModal('modalEstudiante');
-}
-
-// ── MODAL MOTIVO ──
-function abrirModalMotivo() {
-  renderMotivos();
-  document.getElementById('modalMotivo').classList.add('active');
-}
-
-function renderMotivos() {
-  const container = document.getElementById('listaMotivos');
-  container.innerHTML = motivos.map(m => `
-    <div class="motivo-item ${motivoSeleccionado === m.letra ? 'selected' : ''}" onclick="toggleMotivo('${m.letra}')">
-      <div class="motivo-letter">${m.letra}</div>
-      <div class="motivo-text-label">${m.texto}</div>
-      <div class="motivo-check"></div>
-    </div>
-  `).join('');
-}
-
-function toggleMotivo(letra) {
-  motivoSeleccionado = (motivoSeleccionado === letra) ? null : letra;
-  renderMotivos();
-}
-
-function confirmarMotivo() {
-  if (!motivoSeleccionado) {
-    cerrarModal('modalMotivo');
-    return;
-  }
-  const m = motivos.find(x => x.letra === motivoSeleccionado);
-  const texto = `${m.letra}) ${m.texto}`;
-  document.getElementById('motivo_valor').value = texto;
-  const display = document.getElementById('motivo_display');
-  display.textContent = texto;
-  display.classList.remove('placeholder');
-  cerrarModal('modalMotivo');
-}
-
-// ── HELPERS ──
-function cerrarModal(id) {
-  document.getElementById(id).classList.remove('active');
-}
-
-// Close on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('active');
-  });
-});
-
-// Close on ESC
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-  }
-});
-
-function limpiar() {
-  ['nombre_alumno','apellido_alumno','nie','observacion',
-   'nombre_docente','firma_docente','firma_alumno',
-   'nombre_alumno_firma','nombre_responsable','firma_responsable','fecha'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  motivoSeleccionado = null;
-  document.getElementById('motivo_valor').value = '';
-  const display = document.getElementById('motivo_display');
-  display.textContent = 'Toca para seleccionar el motivo…';
-  display.classList.add('placeholder');
-}
-
-function guardar() {
-  const campos = {
-    institucion: document.getElementById('institucion').value,
-    codigo: document.getElementById('codigo').value,
-    nombre_alumno: document.getElementById('nombre_alumno').value,
-    apellido_alumno: document.getElementById('apellido_alumno').value,
-    nie: document.getElementById('nie').value,
-    grado_seccion: document.getElementById('grado_seccion').value,
-    fecha: document.getElementById('fecha').value,
-    motivo: document.getElementById('motivo_valor').value,
-    observacion: document.getElementById('observacion').value,
-    nombre_docente: document.getElementById('nombre_docente').value,
-    nombre_alumno_firma: document.getElementById('nombre_alumno_firma').value,
-    nombre_responsable: document.getElementById('nombre_responsable').value,
-  };
-  const blob = new Blob([JSON.stringify(campos, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'tarjeta_demerito.json';
-  a.click();
-}
-
-function limpiarYCerrar() {
-  cerrarModal('modalConfirmPDF');
-  limpiar();
-}
-
-// Init — set today's date
-document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-</script>
-
-<!-- ══ MODAL CONFIRMACIÓN PDF ══ -->
-<div class="modal-overlay" id="modalConfirmPDF">
-  <div class="modal" style="max-width:380px">
-    <div class="modal-header" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
-      <h2>Descarga Exitosa</h2>
-      <button class="modal-close" onclick="cerrarModal('modalConfirmPDF')">✕</button>
-    </div>
-    <div style="padding:2rem 1.8rem 1.2rem;text-align:center;">
-      <div style="font-size:3.5rem;margin-bottom:0.8rem;animation:popIn 0.4s cubic-bezier(.22,.68,0,1.4)">✅</div>
-      <p style="font-family:'Montserrat',sans-serif;font-size:0.95rem;font-weight:700;color:#1b5e20;margin-bottom:0.5rem;">¡PDF generado con éxito!</p>
-      <p style="font-size:0.85rem;color:var(--ink-light);line-height:1.5;" id="pdfConfirmMsg">El documento ha sido descargado a tu dispositivo.</p>
-    </div>
-    <div style="padding:0 1.8rem 1.6rem;display:flex;justify-content:center;gap:0.8rem;">
-      <button class="btn btn-outline" onclick="limpiarYCerrar()" style="border-color:#c8e6c9;color:#2e7d32;">Nueva tarjeta</button>
-      <button class="btn btn-primary" onclick="cerrarModal('modalConfirmPDF')" style="background:linear-gradient(135deg,#1b5e20,#2e7d32);box-shadow:0 4px 14px rgba(27,94,32,0.35);">Aceptar</button>
+  <!-- MODAL CONFIRMACIÓN -->
+  <div class="modal-overlay" id="modalConfirm" onclick="app.closeModalOnOverlay(event, 'modalConfirm')">
+    <div class="modal" style="max-width:380px">
+      <div class="modal-header" id="confirmHeader">
+        <h2 id="confirmTitle">Confirmación</h2>
+        <button class="modal-close" onclick="app.closeModal('modalConfirm')">✕</button>
+      </div>
+      <div style="padding:2rem 1.8rem;text-align:center;">
+        <div style="font-size:3.5rem;margin-bottom:0.8rem;" id="confirmIcon">✅</div>
+        <p style="font-family:'Montserrat',sans-serif;font-size:0.95rem;font-weight:700;margin-bottom:0.5rem;" id="confirmMessage">¡Operación exitosa!</p>
+        <p style="font-size:0.85rem;color:var(--ink-light);line-height:1.5;" id="confirmDetail"></p>
+      </div>
+      <div style="padding:0 1.8rem 1.6rem;display:flex;justify-content:center;gap:0.8rem;">
+        <button class="btn btn-outline" onclick="app.closeModal('modalConfirm')" id="confirmBtnSecondary">Cerrar</button>
+        <button class="btn btn-primary" onclick="app.closeModal('modalConfirm')" id="confirmBtnPrimary">Aceptar</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- PDF libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-async function descargarPDF() {
-  const btn = document.getElementById('btnPDF');
-  btn.classList.add('loading');
-  btn.textContent = '⏳ Generando...';
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
 
-  // Hide action buttons and modals during capture
-  const actions = document.querySelector('.actions');
-  actions.style.visibility = 'hidden';
-
-  try {
-    const { jsPDF } = window.jspdf;
-    const element = document.querySelector('.card');
-
-    const canvas = await html2canvas(element, {
-      scale: 2.5,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-    });
-
-    // Convert to grayscale for crisp black & white output
-    const grayCanvas = document.createElement('canvas');
-    grayCanvas.width  = canvas.width;
-    grayCanvas.height = canvas.height;
-    const ctx = grayCanvas.getContext('2d');
-    ctx.drawImage(canvas, 0, 0);
-    const imageData = ctx.getImageData(0, 0, grayCanvas.width, grayCanvas.height);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-      // Luminosity formula — better perceived contrast than simple average
-      const gray = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
-      // Boost contrast: push darks darker, lights lighter
-      const boosted = Math.round(Math.pow(gray / 255, 0.85) * 255);
-      data[i] = data[i+1] = data[i+2] = boosted;
-    }
-    ctx.putImageData(imageData, 0, 0);
-
-    // Letter size in mm: 215.9 x 279.4
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter', compress: true });
-
-    const pageW = 215.9;
-    const pageH = 279.4;
-    const margin = 12;
-
-    const availW = pageW - margin * 2;
-    const availH = pageH - margin * 2;
-
-    const imgW = grayCanvas.width;
-    const imgH = grayCanvas.height;
-    const ratio = imgW / imgH;
-
-    let drawW = availW;
-    let drawH = drawW / ratio;
-
-    if (drawH > availH) {
-      drawH = availH;
-      drawW = drawH * ratio;
-    }
-
-    const offsetX = margin + (availW - drawW) / 2;
-    const offsetY = margin + (availH - drawH) / 2;
-
-    // High quality grayscale JPEG
-    const imgData = grayCanvas.toDataURL('image/jpeg', 0.92);
-    pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH, undefined, 'FAST');
-
-    // Filename: full student name, normalized (no accents, no special chars)
-    const rawNombre   = document.getElementById('nombre_alumno').value.trim();
-    const rawApellido = document.getElementById('apellido_alumno').value.trim();
-    const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9 ]/g,'').trim().replace(/\s+/g,'_');
-    const nombreArchivo = (rawNombre || rawApellido)
-      ? normalize(`${rawApellido} ${rawNombre}`)
-      : 'Tarjeta_Demerito';
-    pdf.save(`${nombreArchivo}.pdf`);
-
-    // Show confirmation modal
-    const alumnoNombre = document.getElementById('nombre_alumno').value;
-    const apellidoNombre = document.getElementById('apellido_alumno').value;
-    const nombreCompleto = (alumnoNombre || apellidoNombre)
-      ? `<strong>${apellidoNombre}${alumnoNombre ? ', ' + alumnoNombre : ''}</strong>`
-      : 'el estudiante';
-    document.getElementById('pdfConfirmMsg').innerHTML =
-      `El documento de demérito de ${nombreCompleto} ha sido descargado correctamente a tu dispositivo.`;
-    document.getElementById('modalConfirmPDF').classList.add('active');
-
-  } catch (e) {
-    alert('Error al generar PDF: ' + e.message);
-    console.error(e);
-  } finally {
-    actions.style.visibility = 'visible';
-    btn.classList.remove('loading');
-    btn.textContent = '📄 PDF Carta';
-  }
-}
-</script>
+  <script>
+    /**
+     * Tarjeta de Demérito - Aplicación Mejorada
+     * Versión 2.0 - Código modular y mantenible
+     */
+    
+    const app = (function() {
+      'use strict';
+      
+      // ==================== CONFIGURACIÓN ====================
+      
+      const CONFIG = {
+        STORAGE_KEY: 'tarjeta_demerito_data',
+        HISTORY_KEY: 'tarjeta_demerito_history',
+        MAX_HISTORY: 10
+      };
+      
+      // ==================== DATOS ====================
+      
+      const DATA = {
+        students: [
+          { no: 1, nie: "10192638", nombre: "CAROLINA LISSETH", apellido: "ACOSTA DEODANES" },
+          { no: 2, nie: "20085229", nombre: "CESAR ISMAEL", apellido: "AGUILAR ORTIZ" },
+          { no: 3, nie: "20085270", nombre: "OSCAR EFRAIN", apellido: "BENITEZ PEREZ" },
+          { no: 4, nie: "20085307", nombre: "RUTH NOEMY", apellido: "CARRILLO VENTURA" },
+          { no: 5, nie: "19933288", nombre: "JAZMIN SARAI", apellido: "CASTRO ORTIZ" },
+          { no: 6, nie: "20008551", nombre: "PAMELA GUADALUPE", apellido: "CORNEJO ORTIZ" },
+          { no: 7, nie: "19933292", nombre: "JHAMILTON GEOVANY", apellido: "CRUZ GARCÍA" },
+          { no: 8, nie: "10380636", nombre: "JUANA ELENA", apellido: "CRUZ VEGA" },
+          { no: 9, nie: "20085334", nombre: "DAVID ALEXANDER", apellido: "DEODANES JORGE" },
+          { no: 10, nie: "20161320", nombre: "CARLOS DANIEL", apellido: "DEODANES PÉREZ" },
+          { no: 11, nie: "19933320", nombre: "WILLIAN LEONEL", apellido: "DEODANES RODRIGUEZ" },
+          { no: 12, nie: "20161321", nombre: "KATHERIN MARITZA", apellido: "DEODANES SANTOS" },
+          { no: 13, nie: "20116603", nombre: "XAVIER ERNESTO", apellido: "JORGE BENITEZ" },
+          { no: 14, nie: "20116605", nombre: "JEFFERSON ALEXIS", apellido: "LEON RODRIGUEZ" },
+          { no: 15, nie: "20116607", nombre: "MANUEL ENRIQUE", apellido: "MARTINEZ PEREZ" },
+          { no: 16, nie: "20116608", nombre: "ANDERSON MAURICIO", apellido: "MARTINEZ VASQUEZ" },
+          { no: 17, nie: "20161327", nombre: "JOSÉ BRYAN", apellido: "MARTÍNEZ MIRANDA" },
+          { no: 18, nie: "20116614", nombre: "JORGE ERNESTO", apellido: "MENDEZ PEREZ" },
+          { no: 19, nie: "19964662", nombre: "JOSELYN ROXANA", apellido: "ORTIZ MARTÍNEZ" },
+          { no: 20, nie: "20116635", nombre: "ROSIBEL", apellido: "PEREZ JACINTO" },
+          { no: 21, nie: "19964672", nombre: "ISAÍAS ARMANDO", apellido: "PÉREZ DEODANES" },
+          { no: 22, nie: "20116666", nombre: "DORIS ESTEFANNY", apellido: "VASQUEZ BENITES" },
+          { no: 23, nie: "20116669", nombre: "NELSON ANTONIO", apellido: "VASQUEZ MARTINEZ" },
+          { no: 24, nie: "20116683", nombre: "SERGIO JAVIER", apellido: "VENITES RODRIGUEZ" }
+        ],
+        
+        reasons: [
+          { letra: "A", texto: "No saludar al entrar o al salir del aula." },
+          { letra: "B", texto: "Omitir \"Por favor\" al hacer una petición." },
+          { letra: "C", texto: "Omitir \"Gracias\" al recibir un favor, material o atención." },
+          { letra: "D", texto: "Usar un tono grosero o irrespetuoso hacia compañeros, docentes o personal." },
+          { letra: "E", texto: "Porta su uniforme de forma incorrecta." },
+          { letra: "F", texto: "El corte de cabello no es adecuado según normativa." },
+          { letra: "G", texto: "No cumple con los acuerdos de grado." }
+        ],
+        
+        teachers: [
+          "Carlos Alberto Ramirez",
+          "Sujey Paniagua",
+          "Jaime Castaneda",
+          "Juan Isabel Umanzor",
+          "Mario López",
+          "Mauricio Melara",
+          "Mario León"
+        ]
+      };
+      
+      // ==================== ESTADO ====================
+      
+      let state = {
+        selectedStudent: null,
+        selectedReason: null,
+        selectedTeacher: null,
+        history: [],
+        historyIndex: -1
+      };
+      
+      // ==================== UTILIDADES ====================
+      
+      const utils = {
+        saveToStorage(key, data) {
+          try {
+            localStorage.setItem(key, JSON.stringify(data));
+            return true;
+          } catch (e) {
+            console.warn('Error saving to localStorage:', e);
+            return false;
+          }
+        },
+        
+        loadFromStorage(key, defaultValue = null) {
+          try {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultValue;
+          } catch (e) {
+            console.warn('Error loading from localStorage:', e);
+            return defaultValue;
+          }
+        },
+        
+        debounce(func, wait) {
+          let timeout;
+          return function executedFunction(...args) {
+            const later = () => {
+              clearTimeout(timeout);
+              func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+          };
+        },
+        
+        normalizeText(text) {
+          return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        },
+        
+        formatDate(date = new Date()) {
+          return date.toISOString().split('T')[0];
+        }
+      };
+      
+      // ==================== NOTIFICACIONES ====================
+      
+      const notifications = {
+        container: document.getElementById('toastContainer'),
+        
+        show(message, type = 'info', title = '', duration = 4000) {
+          const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+          };
+          
+          const toast = document.createElement('div');
+          toast.className = `toast ${type}`;
+          toast.innerHTML = `
+            <div class="toast-icon">${icons[type]}</div>
+            <div class="toast-content">
+              <div class="toast-title">${title || type.charAt(0).toUpperCase() + type.slice(1)}</div>
+              <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+          `;
+          
+          this.container.appendChild(toast);
+          
+          if (duration > 0) {
+            setTimeout(() => {
+              toast.style.animation = 'slideInRight 0.4s ease reverse';
+              setTimeout(() => toast.remove(), 400);
+            }, duration);
+          }
+          
+          return toast;
+        },
+        
+        success(message, title = 'Éxito') {
+          return this.show(message, 'success', title);
+        },
+        
+        error(message, title = 'Error') {
+          return this.show(message, 'error', title);
+        },
+        
+        warning(message, title = 'Advertencia') {
+          return this.show(message, 'warning', title);
+        }
+      };
+      
+      // ==================== VALIDACIÓN ====================
+      
+      const validator = {
+        validate() {
+          const errors = [];
+          
+          // Validar estudiante
+          if (!document.getElementById('nombre_alumno').value.trim()) {
+            errors.push({ field: 'nombre', msg: 'Seleccione un estudiante' });
+            this.showError('val-nombre', true);
+          } else {
+            this.showError('val-nombre', false);
+          }
+          
+          // Validar fecha
+          if (!document.getElementById('fecha').value) {
+            errors.push({ field: 'fecha', msg: 'Seleccione una fecha' });
+            this.showError('val-fecha', true);
+          } else {
+            this.showError('val-fecha', false);
+          }
+          
+          // Validar motivo
+          if (!document.getElementById('motivo_valor').value) {
+            errors.push({ field: 'motivo', msg: 'Seleccione un motivo' });
+            this.showError('val-motivo', true);
+          } else {
+            this.showError('val-motivo', false);
+          }
+          
+          // Validar docente
+          if (!document.getElementById('nombre_docente').value.trim()) {
+            errors.push({ field: 'docente', msg: 'Seleccione un docente' });
+            this.showError('val-docente', true);
+          } else {
+            this.showError('val-docente', false);
+          }
+          
+          return errors;
+        },
+        
+        showError(id, show) {
+          const el = document.getElementById(id);
+          if (el) {
+            el.classList.toggle('show', show);
+            const input = el.previousElementSibling?.querySelector('input') || 
+                         el.previousElementSibling?.previousElementSibling;
+            if (input) {
+              input.classList.toggle('error', show);
+            }
+          }
+        },
+        
+        clearErrors() {
+          document.querySelectorAll('.validation-msg').forEach(el => el.classList.remove('show'));
+          document.querySelectorAll('input.error').forEach(el => el.classList.remove('error'));
+        }
+      };
+      
+      // ==================== MODALES ====================
+      
+      const modals = {
+        open(id) {
+          const overlay = document.getElementById(id);
+          overlay.classList.add('active');
+          document.body.style.overflow = 'hidden';
+          
+          // Focus en input de búsqueda si existe
+          const searchInput = overlay.querySelector('input[type="text"]');
+          if (searchInput) {
+            setTimeout(() => searchInput.focus(), 100);
+          }
+        },
+        
+        close(id) {
+          const overlay = document.getElementById(id);
+          overlay.classList.remove('active');
+          
+          // Verificar si hay otros modales abiertos
+          const anyOpen = document.querySelector('.modal-overlay.active');
+          if (!anyOpen) {
+            document.body.style.overflow = '';
+          }
+        },
+        
+        closeOnOverlay(event, id) {
+          if (event.target === document.getElementById(id)) {
+            this.close(id);
+          }
+        },
+        
+        showConfirm(title, message, detail, type = 'success', onAccept = null) {
+          const header = document.getElementById('confirmHeader');
+          const icon = document.getElementById('confirmIcon');
+          
+          const colors = {
+            success: 'linear-gradient(135deg, #1b5e20, #2e7d32)',
+            error: 'linear-gradient(135deg, #c62828, #d32f2f)',
+            warning: 'linear-gradient(135deg, #f57c00, #ff9800)'
+          };
+          
+          const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️'
+          };
+          
+          header.style.background = colors[type] || colors.success;
+          icon.textContent = icons[type] || icons.success;
+          
+          document.getElementById('confirmTitle').textContent = title;
+          document.getElementById('confirmMessage').textContent = message;
+          document.getElementById('confirmDetail').innerHTML = detail;
+          
+          const btnPrimary = document.getElementById('confirmBtnPrimary');
+          btnPrimary.style.background = colors[type] || colors.success;
+          
+          if (onAccept) {
+            btnPrimary.onclick = () => {
+              this.close('modalConfirm');
+              onAccept();
+            };
+          } else {
+            btnPrimary.onclick = () => this.close('modalConfirm');
+          }
+          
+          this.open('modalConfirm');
+        }
+      };
+      
+      // ==================== GESTIÓN DE ESTUDIANTES ====================
+      
+      const studentManager = {
+        renderList(students, highlight = '') {
+          const container = document.getElementById('listaEstudiantes');
+          const currentNIE = document.getElementById('nie').value;
+          
+          if (!students.length) {
+            container.innerHTML = `
+              <div style="padding:2rem;text-align:center;color:#9db8d8;">
+                <div style="font-size:48px;margin-bottom:12px;">🔍</div>
+                No se encontraron estudiantes
+              </div>
+            `;
+            return;
+          }
+          
+          container.innerHTML = students.map(e => {
+            const isSelected = e.nie === currentNIE;
+            const nameHighlighted = highlight 
+              ? e.apellido.replace(new RegExp(`(${highlight})`, 'gi'), '<mark style="background:#fff3cd;border-radius:2px;">$1</mark>') + ', ' + 
+                e.nombre.replace(new RegExp(`(${highlight})`, 'gi'), '<mark style="background:#fff3cd;border-radius:2px;">$1</mark>')
+              : `${e.apellido}, ${e.nombre}`;
+            
+            return `
+              <div class="student-item ${isSelected ? 'selected' : ''}" onclick="app.selectStudent(${e.no})">
+                <div class="student-num">${e.no}</div>
+                <div class="student-info">
+                  <div class="student-name">${nameHighlighted}</div>
+                  <div class="student-nie">NIE: ${e.nie}</div>
+                </div>
+                ${isSelected ? '<span style="color:var(--blue-mid);font-size:1.2rem;">✓</span>' : ''}
+              </div>
+            `;
+          }).join('');
+        },
+        
+        filter() {
+          const query = utils.normalizeText(document.getElementById('buscarEstudiante').value);
+          const filtered = query 
+            ? DATA.students.filter(e => 
+                utils.normalizeText(e.nombre).includes(query) ||
+                utils.normalizeText(e.apellido).includes(query) ||
+                e.nie.includes(query)
+              )
+            : DATA.students;
+          this.renderList(filtered, query);
+        },
+        
+        select(no) {
+          const student = DATA.students.find(x => x.no === no);
+          if (!student) return;
+          
+          state.selectedStudent = student;
+          
+          document.getElementById('nombre_alumno').value = student.nombre;
+          document.getElementById('apellido_alumno').value = student.apellido;
+          document.getElementById('nie').value = student.nie;
+          document.getElementById('nombre_alumno_firma').value = `${student.apellido}, ${student.nombre}`;
+          
+          // Animación de éxito
+          const input = document.getElementById('nombre_alumno');
+          input.style.background = '#e8f5e9';
+          input.style.borderColor = '#4caf50';
+          setTimeout(() => {
+            input.style.background = '';
+            input.style.borderColor = '';
+          }, 800);
+          
+          modals.close('modalEstudiante');
+          validator.showError('val-nombre', false);
+          notifications.success(`${student.apellido}, ${student.nombre} seleccionado`, 'Estudiante');
+          
+          this.saveToHistory();
+        }
+      };
+      
+      // ==================== GESTIÓN DE DOCENTES ====================
+      
+      const teacherManager = {
+        renderList() {
+          const container = document.getElementById('listaDocentes');
+          const current = document.getElementById('nombre_docente').value;
+          
+          container.innerHTML = DATA.teachers.map((t, i) => `
+            <div class="student-item ${current === t ? 'selected' : ''}" onclick="app.selectTeacher('${t.replace(/'/g, "\\'")}')">
+              <div class="student-num">${i + 1}</div>
+              <div class="student-info">
+                <div class="student-name">${t}</div>
+              </div>
+              ${current === t ? '<span style="color:var(--blue-mid);font-size:1.2rem;">✓</span>' : ''}
+            </div>
+          `).join('');
+        },
+        
+        select(name) {
+          state.selectedTeacher = name;
+          document.getElementById('nombre_docente').value = name;
+          
+          const input = document.getElementById('nombre_docente');
+          input.style.background = '#e8f5e9';
+          input.style.borderColor = '#4caf50';
+          setTimeout(() => {
+            input.style.background = '';
+            input.style.borderColor = '';
+          }, 800);
+          
+          modals.close('modalDocente');
+          validator.showError('val-docente', false);
+          notifications.success(`${name} seleccionado`, 'Docente');
+          
+          this.saveToHistory();
+        }
+      };
+      
+      // ==================== GESTIÓN DE MOTIVOS ====================
+      
+      const reasonManager = {
+        renderList() {
+          const container = document.getElementById('listaMotivos');
+          
+          container.innerHTML = DATA.reasons.map(m => `
+            <div class="motivo-item ${state.selectedReason === m.letra ? 'selected' : ''}" onclick="app.toggleReason('${m.letra}')">
+              <div class="motivo-letter">${m.letra}</div>
+              <div class="motivo-text-label">${m.texto}</div>
+              <div class="motivo-check"></div>
+            </div>
+          `).join('');
+        },
+        
+        toggle(letra) {
+          state.selectedReason = (state.selectedReason === letra) ? null : letra;
+          this.renderList();
+        },
+        
+        confirm() {
+          if (!state.selectedReason) {
+            notifications.warning('Seleccione un motivo primero');
+            return;
+          }
+          
+          const reason = DATA.reasons.find(x => x.letra === state.selectedReason);
+          const texto = `${reason.letra}) ${reason.texto}`;
+          
+          document.getElementById('motivo_valor').value = texto;
+          document.getElementById('motivo_letra').value = reason.letra;
+          
+          const display = document.getElementById('motivo_display');
+          display.textContent = texto;
+          display.classList.remove('placeholder');
+          
+          modals.close('modalMotivo');
+          validator.showError('val-motivo', false);
+          notifications.success('Motivo seleccionado', 'Demérito');
+          
+          this.saveToHistory();
+        }
+      };
+      
+      // ==================== HISTORIAL ====================
+      
+      const historyManager = {
+        save() {
+          const data = {
+            student: state.selectedStudent,
+            teacher: state.selectedTeacher,
+            reason: state.selectedReason,
+            formData: {
+              fecha: document.getElementById('fecha').value,
+              observacion: document.getElementById('observacion').value,
+              firma_docente: document.getElementById('firma_docente').value,
+              firma_alumno: document.getElementById('firma_alumno').value,
+              nombre_responsable: document.getElementById('nombre_responsable').value,
+              firma_responsable: document.getElementById('firma_responsable').value
+            },
+            timestamp: Date.now()
+          };
+          
+          if (state.historyIndex < state.history.length - 1) {
+            state.history = state.history.slice(0, state.historyIndex + 1);
+          }
+          
+          state.history.push(data);
+          
+          if (state.history.length > CONFIG.MAX_HISTORY) {
+            state.history.shift();
+          } else {
+            state.historyIndex++;
+          }
+          
+          utils.saveToStorage(CONFIG.HISTORY_KEY, state.history);
+        },
+        
+        undo() {
+          if (state.historyIndex > 0) {
+            state.historyIndex--;
+            this.restore(state.history[state.historyIndex]);
+            notifications.info('Acción deshecha', 'Deshacer');
+            return true;
+          }
+          notifications.warning('No hay acciones para deshacer');
+          return false;
+        }
+      };
+      
+      // ==================== PERSISTENCIA ====================
+      
+      const storageManager = {
+        save() {
+          const data = {
+            student: state.selectedStudent,
+            teacher: state.selectedTeacher,
+            reason: state.selectedReason,
+            formData: {
+              fecha: document.getElementById('fecha').value,
+              observacion: document.getElementById('observacion').value,
+              firma_docente: document.getElementById('firma_docente').value,
+              firma_alumno: document.getElementById('firma_alumno').value,
+              nombre_responsable: document.getElementById('nombre_responsable').value,
+              firma_responsable: document.getElementById('firma_responsable').value
+            }
+          };
+          
+          if (utils.saveToStorage(CONFIG.STORAGE_KEY, data)) {
+            notifications.success('Datos guardados localmente', 'Guardado');
+          }
+        },
+        
+        load() {
+          const data = utils.loadFromStorage(CONFIG.STORAGE_KEY);
+          if (!data) return;
+          
+          if (data.student) {
+            state.selectedStudent = data.student;
+            document.getElementById('nombre_alumno').value = data.student.nombre;
+            document.getElementById('apellido_alumno').value = data.student.apellido;
+            document.getElementById('nie').value = data.student.nie;
+            document.getElementById('nombre_alumno_firma').value = `${data.student.apellido}, ${data.student.nombre}`;
+          }
+          
+          if (data.teacher) {
+            state.selectedTeacher = data.teacher;
+            document.getElementById('nombre_docente').value = data.teacher;
+          }
+          
+          if (data.reason) {
+            state.selectedReason = data.reason;
+            const reason = DATA.reasons.find(r => r.letra === data.reason);
+            if (reason) {
+              const texto = `${reason.letra}) ${reason.texto}`;
+              document.getElementById('motivo_valor').value = texto;
+              document.getElementById('motivo_letra').value = reason.letra;
+              const display = document.getElementById('motivo_display');
+              display.textContent = texto;
+              display.classList.remove('placeholder');
+            }
+          }
+          
+          if (data.formData) {
+            Object.entries(data.formData).forEach(([key, value]) => {
+              const el = document.getElementById(key);
+              if (el) el.value = value || '';
+            });
+          }
+        },
+        
+        clear() {
+          localStorage.removeItem(CONFIG.STORAGE_KEY);
+          localStorage.removeItem(CONFIG.HISTORY_KEY);
+        }
+      };
+      
+      // ==================== EXPORTACIÓN ====================
+      
+      const exportManager = {
+        async pdf() {
+          const errors = validator.validate();
+          if (errors.length > 0) {
+            notifications.error('Complete los campos requeridos', 'Validación');
+            return;
+          }
+          
+          const btn = document.getElementById('btnPDF');
+          btn.classList.add('loading');
+          btn.innerHTML = '<span class="spinner"></span> Generando...';
+          
+          try {
+            const { jsPDF } = window.jspdf;
+            const element = document.querySelector('.card');
+            
+            // Ocultar elementos de UI
+            const actions = document.querySelector('.actions');
+            actions.style.visibility = 'hidden';
+            
+            const canvas = await html2canvas(element, {
+              scale: 2.5,
+              useCORS: true,
+              allowTaint: true,
+              backgroundColor: '#ffffff',
+              logging: false
+            });
+            
+            // Convertir a escala de grises
+            const grayCanvas = document.createElement('canvas');
+            grayCanvas.width = canvas.width;
+            grayCanvas.height = canvas.height;
+            const ctx = grayCanvas.getContext('2d');
+            ctx.drawImage(canvas, 0, 0);
+            
+            const imageData = ctx.getImageData(0, 0, grayCanvas.width, grayCanvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+              const gray = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+              const boosted = Math.round(Math.pow(gray / 255, 0.85) * 255);
+              data[i] = data[i+1] = data[i+2] = boosted;
+            }
+            ctx.putImageData(imageData, 0, 0);
+            
+            const pdf = new jsPDF({ 
+              orientation: 'portrait', 
+              unit: 'mm', 
+              format: 'letter', 
+              compress: true 
+            });
+            
+            const pageW = 215.9;
+            const pageH = 279.4;
+            const margin = 12;
+            const availW = pageW - margin * 2;
+            const availH = pageH - margin * 2;
+            
+            const imgW = grayCanvas.width;
+            const imgH = grayCanvas.height;
+            const ratio = imgW / imgH;
+            
+            let drawW = availW;
+            let drawH = drawW / ratio;
+            
+            if (drawH > availH) {
+              drawH = availH;
+              drawW = drawH * ratio;
+            }
+            
+            const offsetX = margin + (availW - drawW) / 2;
+            const offsetY = margin + (availH - drawH) / 2;
+            
+            const imgData = grayCanvas.toDataURL('image/jpeg', 0.92);
+            pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH);
+            
+            // Generar nombre de archivo
+            const rawNombre = document.getElementById('nombre_alumno').value.trim();
+            const rawApellido = document.getElementById('apellido_alumno').value.trim();
+            const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/\s+/g, '_');
+            const nombreArchivo = (rawNombre || rawApellido)
+              ? normalize(`${rawApellido}_${rawNombre}`)
+              : 'Tarjeta_Demerito';
+            
+            pdf.save(`${nombreArchivo}.pdf`);
+            
+            const studentName = `${rawApellido}, ${rawNombre}`;
+            modals.showConfirm(
+              '¡PDF Generado!',
+              'Descarga exitosa',
+              `El documento de demérito de <strong>${studentName}</strong> ha sido descargado correctamente.`,
+              'success',
+              () => {
+                if (confirm('¿Desea limpiar el formulario para una nueva tarjeta?')) {
+                  this.clearForm();
+                }
+              }
+            );
+            
+          } catch (error) {
+            console.error('Error generating PDF:', error);
+            notifications.error('Error al generar el PDF: ' + error.message, 'Error');
+          } finally {
+            document.querySelector('.actions').style.visibility = 'visible';
+            btn.classList.remove('loading');
+            btn.innerHTML = '📄 PDF';
+          }
+        },
+        
+        excel() {
+          const errors = validator.validate();
+          if (errors.length > 0) {
+            notifications.error('Complete los campos requeridos', 'Validación');
+            return;
+          }
+          
+          try {
+            const student = state.selectedStudent;
+            const reason = document.getElementById('motivo_valor').value;
+            const fecha = document.getElementById('fecha').value;
+            const docente = state.selectedTeacher;
+            
+            const data = [{
+              'Fecha': fecha,
+              'NIE': student?.nie || '',
+              'Apellidos': student?.apellido || '',
+              'Nombres': student?.nombre || '',
+              'Grado/Sección': document.getElementById('grado_seccion').value,
+              'Motivo': reason,
+              'Observación': document.getElementById('observacion').value,
+              'Docente': docente || '',
+              'Responsable': document.getElementById('nombre_responsable').value
+            }];
+            
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Demérito');
+            
+            const nombreArchivo = student 
+              ? `Demerito_${student.apellido}_${student.nombre}`.replace(/\s+/g, '_')
+              : 'Demerito';
+            
+            XLSX.writeFile(wb, `${nombreArchivo}.xlsx`);
+            notifications.success('Archivo Excel generado', 'Exportación');
+            
+          } catch (error) {
+            console.error('Error generating Excel:', error);
+            notifications.error('Error al generar Excel', 'Error');
+          }
+        }
+      };
+      
+      // ==================== INICIALIZACIÓN ====================
+      
+      function init() {
+        // Establecer fecha actual
+        document.getElementById('fecha').value = utils.formatDate();
+        
+        // Cargar datos guardados
+        storageManager.load();
+        
+        // Event listeners
+        setupEventListeners();
+        
+        // Atajos de teclado
+        setupKeyboardShortcuts();
+        
+        notifications.success('Sistema listo', 'Bienvenido');
+      }
+      
+      function setupEventListeners() {
+        // Guardar automáticamente al cambiar campos de texto
+        const autoSaveFields = ['observacion', 'firma_docente', 'firma_alumno', 'nombre_responsable', 'firma_responsable'];
+        autoSaveFields.forEach(id => {
+          document.getElementById(id)?.addEventListener('input', utils.debounce(() => {
+            storageManager.save();
+          }, 1000));
+        });
+        
+        // Validación en tiempo real
+        document.getElementById('fecha')?.addEventListener('change', () => {
+          validator.showError('val-fecha', false);
+          storageManager.save();
+        });
+      }
+      
+      function setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => {
+              m.classList.remove('active');
+            });
+            document.body.style.overflow = '';
+          }
+          
+          // Ctrl+S: Guardar
+          if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            storageManager.save();
+          }
+          
+          // Ctrl+P: Imprimir
+          if (e.ctrlKey && e.key === 'p') {
+            e.preventDefault();
+            window.print();
+          }
+          
+          // Ctrl+Z: Deshacer (si implementamos historial completo)
+          if (e.ctrlKey && e.key === 'z') {
+            // historyManager.undo();
+          }
+        });
+      }
+      
+      // ==================== API PÚBLICA ====================
+      
+      return {
+        init,
+        
+        // Modales
+        openStudentModal() {
+          document.getElementById('buscarEstudiante').value = '';
+          studentManager.renderList(DATA.students);
+          modals.open('modalEstudiante');
+        },
+        
+        openTeacherModal() {
+          teacherManager.renderList();
+          modals.open('modalDocente');
+        },
+        
+        openReasonModal() {
+          reasonManager.renderList();
+          modals.open('modalMotivo');
+        },
+        
+        closeModal: modals.close.bind(modals),
+        closeModalOnOverlay: modals.closeOnOverlay.bind(modals),
+        
+        // Selección
+        filterStudents: studentManager.filter.bind(studentManager),
+        selectStudent: studentManager.select.bind(studentManager),
+        selectTeacher: teacherManager.select.bind(teacherManager),
+        toggleReason: reasonManager.toggle.bind(reasonManager),
+        confirmReason: reasonManager.confirm.bind(reasonManager),
+        
+        // Acciones
+        saveData() {
+          const errors = validator.validate();
+          if (errors.length > 0) {
+            notifications.error('Complete los campos marcados como requeridos', 'Validación');
+            return;
+          }
+          
+          storageManager.save();
+          
+          // También exportar a JSON como en el código original
+          const data = {
+            institucion: document.getElementById('institucion').value,
+            codigo: document.getElementById('codigo').value,
+            nombre_alumno: document.getElementById('nombre_alumno').value,
+            apellido_alumno: document.getElementById('apellido_alumno').value,
+            nie: document.getElementById('nie').value,
+            grado_seccion: document.getElementById('grado_seccion').value,
+            fecha: document.getElementById('fecha').value,
+            motivo: document.getElementById('motivo_valor').value,
+            observacion: document.getElementById('observacion').value,
+            nombre_docente: document.getElementById('nombre_docente').value,
+            nombre_alumno_firma: document.getElementById('nombre_alumno_firma').value,
+            nombre_responsable: document.getElementById('nombre_responsable').value,
+            timestamp: new Date().toISOString()
+          };
+          
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `tarjeta_demerito_${data.nie || 'estudiante'}.json`;
+          a.click();
+          
+          modals.showConfirm(
+            '¡Datos Guardados!',
+            'Guardado exitoso',
+            'Los datos han sido guardados localmente y exportados a JSON.',
+            'success'
+          );
+        },
+        
+        clearForm() {
+          if (!confirm('¿Está seguro de limpiar el formulario? Se perderán los datos no guardados.')) {
+            return;
+          }
+          
+          const fields = ['nombre_alumno', 'apellido_alumno', 'nie', 'observacion',
+            'nombre_docente', 'firma_docente', 'firma_alumno',
+            'nombre_alumno_firma', 'nombre_responsable', 'firma_responsable'];
+          
+          fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+          });
+          
+          document.getElementById('fecha').value = utils.formatDate();
+          
+          state.selectedStudent = null;
+          state.selectedTeacher = null;
+          state.selectedReason = null;
+          
+          document.getElementById('motivo_valor').value = '';
+          document.getElementById('motivo_letra').value = '';
+          const display = document.getElementById('motivo_display');
+          display.textContent = 'Toca para seleccionar el motivo...';
+          display.classList.add('placeholder');
+          
+          validator.clearErrors();
+          storageManager.clear();
+          
+          notifications.success('Formulario limpiado', 'Limpiar');
+        },
+        
+        exportPDF: exportManager.pdf.bind(exportManager),
+        exportExcel: exportManager.excel.bind(exportManager)
+      };
+    })();
+    
+    // Inicializar aplicación
+    document.addEventListener('DOMContentLoaded', app.init);
+  </script>
 </body>
 </html>
