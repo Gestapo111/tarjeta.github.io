@@ -31,6 +31,8 @@
       --success: #1b5e20;
       --warning: #f57c00;
       --error: #c62828;
+      --whatsapp: #25d366;
+      --whatsapp-dark: #128c7e;
       --radius: 10px;
       --shadow-sm: 0 2px 8px rgba(10,36,99,0.08);
       --shadow-md: 0 8px 24px rgba(10,36,99,0.12);
@@ -620,6 +622,18 @@
       cursor: wait; 
     }
     
+    /* WhatsApp Button */
+    .btn-whatsapp {
+      background: linear-gradient(135deg, var(--whatsapp), var(--whatsapp-dark));
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+    }
+    
+    .btn-whatsapp:hover {
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+      transform: translateY(-2px);
+    }
+    
     .btn-primary {
       background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
       color: white; 
@@ -635,6 +649,36 @@
       opacity: 0.5;
       cursor: not-allowed;
       transform: none !important;
+    }
+
+    /* WhatsApp Instructions Modal */
+    .whatsapp-instructions {
+      background: #f0fdf4;
+      border: 2px solid var(--whatsapp);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      text-align: left;
+    }
+    
+    .whatsapp-instructions h4 {
+      color: var(--whatsapp-dark);
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .whatsapp-instructions ol {
+      margin-left: 1.2rem;
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+    
+    .whatsapp-instructions li {
+      margin-bottom: 0.4rem;
     }
 
     /* ══════════════════════════════════════════
@@ -947,6 +991,7 @@
     .toast.success { border-left-color: var(--success); }
     .toast.error { border-left-color: var(--error); }
     .toast.warning { border-left-color: var(--warning); }
+    .toast.whatsapp { border-left-color: var(--whatsapp); }
     
     .toast-icon {
       font-size: 22px;
@@ -1212,6 +1257,7 @@
           <button class="btn btn-print" onclick="window.print()">🖨️ Imprimir</button>
           <button class="btn btn-excel" onclick="app.exportExcel()">📊 Excel</button>
           <button class="btn btn-pdf" onclick="app.exportPDF()" id="btnPDF">📄 PDF</button>
+          <button class="btn btn-whatsapp" onclick="app.sendWhatsApp()" id="btnWhatsApp">📱 WhatsApp</button>
           <button class="btn btn-primary" onclick="app.saveData()">💾 Guardar</button>
         </div>
       </div>
@@ -1260,7 +1306,7 @@
 
   <!-- MODAL CONFIRMACIÓN -->
   <div class="modal-overlay" id="modalConfirm" onclick="app.closeModalOnOverlay(event, 'modalConfirm')">
-    <div class="modal" style="max-width:380px">
+    <div class="modal" style="max-width:420px">
       <div class="modal-header" id="confirmHeader">
         <h2 id="confirmTitle">Confirmación</h2>
         <button class="modal-close" onclick="app.closeModal('modalConfirm')">✕</button>
@@ -1269,6 +1315,18 @@
         <div style="font-size:3.5rem;margin-bottom:0.8rem;" id="confirmIcon">✅</div>
         <p style="font-family:'Montserrat',sans-serif;font-size:0.95rem;font-weight:700;margin-bottom:0.5rem;" id="confirmMessage">¡Operación exitosa!</p>
         <p style="font-size:0.85rem;color:var(--ink-light);line-height:1.5;" id="confirmDetail"></p>
+        
+        <!-- WhatsApp Instructions -->
+        <div class="whatsapp-instructions" id="whatsappInstructions" style="display:none;">
+          <h4>📱 Pasos para enviar por WhatsApp:</h4>
+          <ol>
+            <li>El PDF se ha descargado automáticamente a su dispositivo</li>
+            <li>Se abrirá WhatsApp Web en una nueva pestaña</li>
+            <li>En el chat, haga clic en el ícono de adjuntar (📎)</li>
+            <li>Seleccione el archivo PDF descargado</li>
+            <li>Envíe el mensaje</li>
+          </ol>
+        </div>
       </div>
       <div style="padding:0 1.8rem 1.6rem;display:flex;justify-content:center;gap:0.8rem;">
         <button class="btn btn-outline" onclick="app.closeModal('modalConfirm')" id="confirmBtnSecondary">Cerrar</button>
@@ -1283,7 +1341,7 @@
   <script>
     /**
      * Tarjeta de Demérito - Aplicación Mejorada
-     * Versión 2.1 - Lista actualizada (23 estudiantes)
+     * Versión 2.2 - Con envío por WhatsApp
      */
     
     const app = (function() {
@@ -1294,14 +1352,14 @@
       const CONFIG = {
         STORAGE_KEY: 'tarjeta_demerito_data',
         HISTORY_KEY: 'tarjeta_demerito_history',
-        MAX_HISTORY: 10
+        MAX_HISTORY: 10,
+        WHATSAPP_NUMBER: '50370438914' // Número destino (sin el +)
       };
       
       // ==================== DATOS ====================
       
       const DATA = {
-        // Lista actualizada: Eliminado Isaías Armando Pérez Deodanes (NIE: 19964672)
-        // Total: 23 estudiantes (antes 24)
+        // Lista actualizada: 23 estudiantes (Isaías Armando retirado)
         students: [
           { no: 1, nie: "10192638", nombre: "CAROLINA LISSETH", apellido: "ACOSTA DEODANES" },
           { no: 2, nie: "20085229", nombre: "CESAR ISMAEL", apellido: "AGUILAR ORTIZ" },
@@ -1323,10 +1381,9 @@
           { no: 18, nie: "20116614", nombre: "JORGE ERNESTO", apellido: "MENDEZ PEREZ" },
           { no: 19, nie: "19964662", nombre: "JOSELYN ROXANA", apellido: "ORTIZ MARTÍNEZ" },
           { no: 20, nie: "20116635", nombre: "ROSIBEL", apellido: "PEREZ JACINTO" },
-          // { no: 21, nie: "19964672", nombre: "ISAÍAS ARMANDO", apellido: "PÉREZ DEODANES" }, // ELIMINADO - Retirado de matrícula
-          { no: 21, nie: "20116666", nombre: "DORIS ESTEFANNY", apellido: "VASQUEZ BENITES" }, // Reenumerado
-          { no: 22, nie: "20116669", nombre: "NELSON ANTONIO", apellido: "VASQUEZ MARTINEZ" }, // Reenumerado
-          { no: 23, nie: "20116683", nombre: "SERGIO JAVIER", apellido: "VENITES RODRIGUEZ" }  // Reenumerado
+          { no: 21, nie: "20116666", nombre: "DORIS ESTEFANNY", apellido: "VASQUEZ BENITES" },
+          { no: 22, nie: "20116669", nombre: "NELSON ANTONIO", apellido: "VASQUEZ MARTINEZ" },
+          { no: 23, nie: "20116683", nombre: "SERGIO JAVIER", apellido: "VENITES RODRIGUEZ" }
         ],
         
         reasons: [
@@ -1357,7 +1414,8 @@
         selectedReason: null,
         selectedTeacher: null,
         history: [],
-        historyIndex: -1
+        historyIndex: -1,
+        lastPDFBlob: null // Almacena el último PDF generado para WhatsApp
       };
       
       // ==================== UTILIDADES ====================
@@ -1414,13 +1472,14 @@
             success: '✅',
             error: '❌',
             warning: '⚠️',
-            info: 'ℹ️'
+            info: 'ℹ️',
+            whatsapp: '📱'
           };
           
           const toast = document.createElement('div');
           toast.className = `toast ${type}`;
           toast.innerHTML = `
-            <div class="toast-icon">${icons[type]}</div>
+            <div class="toast-icon">${icons[type] || icons.info}</div>
             <div class="toast-content">
               <div class="toast-title">${title || type.charAt(0).toUpperCase() + type.slice(1)}</div>
               <div class="toast-message">${message}</div>
@@ -1450,6 +1509,10 @@
         
         warning(message, title = 'Advertencia') {
           return this.show(message, 'warning', title);
+        },
+        
+        whatsapp(message, title = 'WhatsApp') {
+          return this.show(message, 'whatsapp', title, 6000);
         }
       };
       
@@ -1538,20 +1601,23 @@
           }
         },
         
-        showConfirm(title, message, detail, type = 'success', onAccept = null) {
+        showConfirm(title, message, detail, type = 'success', onAccept = null, showWhatsAppInstructions = false) {
           const header = document.getElementById('confirmHeader');
           const icon = document.getElementById('confirmIcon');
+          const whatsappDiv = document.getElementById('whatsappInstructions');
           
           const colors = {
             success: 'linear-gradient(135deg, #1b5e20, #2e7d32)',
             error: 'linear-gradient(135deg, #c62828, #d32f2f)',
-            warning: 'linear-gradient(135deg, #f57c00, #ff9800)'
+            warning: 'linear-gradient(135deg, #f57c00, #ff9800)',
+            whatsapp: 'linear-gradient(135deg, #25d366, #128c7e)'
           };
           
           const icons = {
             success: '✅',
             error: '❌',
-            warning: '⚠️'
+            warning: '⚠️',
+            whatsapp: '📱'
           };
           
           header.style.background = colors[type] || colors.success;
@@ -1560,6 +1626,9 @@
           document.getElementById('confirmTitle').textContent = title;
           document.getElementById('confirmMessage').textContent = message;
           document.getElementById('confirmDetail').innerHTML = detail;
+          
+          // Mostrar/ocultar instrucciones de WhatsApp
+          whatsappDiv.style.display = showWhatsAppInstructions ? 'block' : 'none';
           
           const btnPrimary = document.getElementById('confirmBtnPrimary');
           btnPrimary.style.background = colors[type] || colors.success;
@@ -1796,7 +1865,97 @@
         }
       };
       
-      // ==================== EXPORTACIÓN PDF CON TEXTO NEGRO ALTA CALIDAD ====================
+      // ==================== GENERACIÓN DE PDF ====================
+      
+      const pdfGenerator = {
+        async generate(forWhatsApp = false) {
+          const { jsPDF } = window.jspdf;
+          const element = document.querySelector('.card');
+          
+          // Captura con alta resolución
+          const canvas = await html2canvas(element, {
+            scale: 3,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            imageTimeout: 0,
+            onclone: (clonedDoc) => {
+              clonedDoc.body.style.backgroundColor = '#ffffff';
+            }
+          });
+          
+          // Procesamiento de imagen para texto NEGRO PURO
+          const processedCanvas = document.createElement('canvas');
+          processedCanvas.width = canvas.width;
+          processedCanvas.height = canvas.height;
+          const ctx = processedCanvas.getContext('2d');
+          
+          ctx.drawImage(canvas, 0, 0);
+          
+          const imageData = ctx.getImageData(0, 0, processedCanvas.width, processedCanvas.height);
+          const data = imageData.data;
+          
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            
+            let gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+            
+            if (gray < 180) {
+              const intensity = Math.max(0, (gray - 120) * 4);
+              gray = Math.min(intensity, 45);
+            } else {
+              gray = Math.min(255, gray + 20);
+            }
+            
+            data[i] = gray;
+            data[i + 1] = gray;
+            data[i + 2] = gray;
+          }
+          
+          ctx.putImageData(imageData, 0, 0);
+          
+          // Configurar PDF
+          const pdf = new jsPDF({ 
+            orientation: 'portrait', 
+            unit: 'mm', 
+            format: 'letter',
+            compress: true,
+            precision: 16
+          });
+          
+          const pageW = 215.9;
+          const pageH = 279.4;
+          const margin = 10;
+          
+          const availW = pageW - margin * 2;
+          const availH = pageH - margin * 2;
+          
+          const imgW = processedCanvas.width;
+          const imgH = processedCanvas.height;
+          const ratio = imgW / imgH;
+          
+          let drawW = availW;
+          let drawH = drawW / ratio;
+          
+          if (drawH > availH) {
+            drawH = availH;
+            drawW = drawH * ratio;
+          }
+          
+          const offsetX = margin + (availW - drawW) / 2;
+          const offsetY = margin + (availH - drawH) / 2;
+          
+          const imgData = processedCanvas.toDataURL('image/jpeg', 1.0);
+          pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH, undefined, 'NONE');
+          
+          return pdf;
+        }
+      };
+      
+      // ==================== EXPORTACIÓN Y ENVÍO ====================
       
       const exportManager = {
         async pdf() {
@@ -1811,100 +1970,7 @@
           btn.innerHTML = '<span class="spinner"></span> Generando...';
           
           try {
-            const { jsPDF } = window.jspdf;
-            const element = document.querySelector('.card');
-            
-            // Ocultar elementos de UI
-            const actions = document.querySelector('.actions');
-            actions.style.visibility = 'hidden';
-            
-            // Captura con alta resolución (3x) para máxima nitidez de texto
-            const canvas = await html2canvas(element, {
-              scale: 3,
-              useCORS: true,
-              allowTaint: true,
-              backgroundColor: '#ffffff',
-              logging: false,
-              imageTimeout: 0,
-              onclone: (clonedDoc) => {
-                clonedDoc.body.style.backgroundColor = '#ffffff';
-              }
-            });
-            
-            // Procesamiento de imagen para texto NEGRO PURO de alta calidad
-            const processedCanvas = document.createElement('canvas');
-            processedCanvas.width = canvas.width;
-            processedCanvas.height = canvas.height;
-            const ctx = processedCanvas.getContext('2d');
-            
-            // Dibujar imagen original
-            ctx.drawImage(canvas, 0, 0);
-            
-            // Procesar píxeles para máximo contraste de texto negro
-            const imageData = ctx.getImageData(0, 0, processedCanvas.width, processedCanvas.height);
-            const data = imageData.data;
-            
-            for (let i = 0; i < data.length; i += 4) {
-              const r = data[i];
-              const g = data[i + 1];
-              const b = data[i + 2];
-              
-              // Convertir a escala de grises con fórmula de luminancia percibida
-              let gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
-              
-              // Umbralización adaptativa para texto negro oscuro/nitido
-              if (gray < 180) {
-                // Si es oscuro, forzar a negro puro (0-45) para máximo contraste
-                const intensity = Math.max(0, (gray - 120) * 4);
-                gray = Math.min(intensity, 45);
-              } else {
-                // Si es claro, mantener blanco o casi blanco
-                gray = Math.min(255, gray + 20);
-              }
-              
-              data[i] = gray;     // R
-              data[i + 1] = gray; // G
-              data[i + 2] = gray; // B
-            }
-            
-            ctx.putImageData(imageData, 0, 0);
-            
-            // Configurar PDF con calidad máxima
-            const pdf = new jsPDF({ 
-              orientation: 'portrait', 
-              unit: 'mm', 
-              format: 'letter',
-              compress: true,
-              precision: 16
-            });
-            
-            const pageW = 215.9;
-            const pageH = 279.4;
-            const margin = 10;
-            
-            const availW = pageW - margin * 2;
-            const availH = pageH - margin * 2;
-            
-            const imgW = processedCanvas.width;
-            const imgH = processedCanvas.height;
-            const ratio = imgW / imgH;
-            
-            let drawW = availW;
-            let drawH = drawW / ratio;
-            
-            if (drawH > availH) {
-              drawH = availH;
-              drawW = drawH * ratio;
-            }
-            
-            const offsetX = margin + (availW - drawW) / 2;
-            const offsetY = margin + (availH - drawH) / 2;
-            
-            // Exportar como JPEG con calidad 100%
-            const imgData = processedCanvas.toDataURL('image/jpeg', 1.0);
-            
-            // Agregar imagen al PDF sin compresión adicional ('NONE')
-            pdf.addImage(imgData, 'JPEG', offsetX, offsetY, drawW, drawH, undefined, 'NONE');
+            const pdf = await pdfGenerator.generate();
             
             // Generar nombre de archivo
             const rawNombre = document.getElementById('nombre_alumno').value.trim();
@@ -1933,9 +1999,71 @@
             console.error('Error generating PDF:', error);
             notifications.error('Error al generar el PDF: ' + error.message, 'Error');
           } finally {
-            document.querySelector('.actions').style.visibility = 'visible';
             btn.classList.remove('loading');
             btn.innerHTML = '📄 PDF';
+          }
+        },
+        
+        async sendWhatsApp() {
+          const errors = validator.validate();
+          if (errors.length > 0) {
+            notifications.error('Complete los campos requeridos', 'Validación');
+            return;
+          }
+          
+          const btn = document.getElementById('btnWhatsApp');
+          btn.classList.add('loading');
+          btn.innerHTML = '<span class="spinner"></span> Preparando...';
+          
+          try {
+            const pdf = await pdfGenerator.generate();
+            
+            // Generar nombre de archivo
+            const rawNombre = document.getElementById('nombre_alumno').value.trim();
+            const rawApellido = document.getElementById('apellido_alumno').value.trim();
+            const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/\s+/g, '_');
+            const nombreArchivo = (rawNombre || rawApellido)
+              ? normalize(`${rawApellido}_${rawNombre}`)
+              : 'Tarjeta_Demerito';
+            
+            // Descargar el PDF automáticamente
+            pdf.save(`${nombreArchivo}.pdf`);
+            
+            // Preparar mensaje para WhatsApp
+            const studentName = `${rawApellido}, ${rawNombre}`;
+            const fecha = document.getElementById('fecha').value;
+            const motivo = document.getElementById('motivo_valor').value;
+            const mensaje = encodeURIComponent(
+              `*Tarjeta de Demérito*\n\n` +
+              `📋 *Estudiante:* ${studentName}\n` +
+              `📅 *Fecha:* ${fecha}\n` +
+              `⚠️ *Motivo:* ${motivo}\n\n` +
+              `Adjunto documento PDF para su revisión.`
+            );
+            
+            // Abrir WhatsApp Web después de un breve delay para asegurar que la descarga inició
+            setTimeout(() => {
+              window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${mensaje}`, '_blank');
+            }, 1000);
+            
+            // Mostrar confirmación con instrucciones
+            modals.showConfirm(
+              '¡Listo para WhatsApp!',
+              'PDF descargado',
+              `El documento de <strong>${studentName}</strong> se ha descargado. WhatsApp Web se abrirá en una nueva pestaña.`,
+              'whatsapp',
+              null,
+              true // Mostrar instrucciones
+            );
+            
+            notifications.whatsapp('PDF descargado. Abra WhatsApp Web y adjunte el archivo.', 'Enviar a +503 7043-8914');
+            
+          } catch (error) {
+            console.error('Error:', error);
+            notifications.error('Error al preparar el envío: ' + error.message, 'Error');
+          } finally {
+            btn.classList.remove('loading');
+            btn.innerHTML = '📱 WhatsApp';
           }
         },
         
@@ -2132,7 +2260,8 @@
         },
         
         exportPDF: exportManager.pdf.bind(exportManager),
-        exportExcel: exportManager.excel.bind(exportManager)
+        exportExcel: exportManager.excel.bind(exportManager),
+        sendWhatsApp: exportManager.sendWhatsApp.bind(exportManager)
       };
     })();
     
