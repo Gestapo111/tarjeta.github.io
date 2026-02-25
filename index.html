@@ -1283,7 +1283,7 @@
   <script>
     /**
      * Tarjeta de Demérito - Aplicación Mejorada
-     * Versión 2.0 - Texto PDF de alta calidad
+     * Versión 2.1 - Lista actualizada (23 estudiantes)
      */
     
     const app = (function() {
@@ -1300,6 +1300,8 @@
       // ==================== DATOS ====================
       
       const DATA = {
+        // Lista actualizada: Eliminado Isaías Armando Pérez Deodanes (NIE: 19964672)
+        // Total: 23 estudiantes (antes 24)
         students: [
           { no: 1, nie: "10192638", nombre: "CAROLINA LISSETH", apellido: "ACOSTA DEODANES" },
           { no: 2, nie: "20085229", nombre: "CESAR ISMAEL", apellido: "AGUILAR ORTIZ" },
@@ -1321,10 +1323,10 @@
           { no: 18, nie: "20116614", nombre: "JORGE ERNESTO", apellido: "MENDEZ PEREZ" },
           { no: 19, nie: "19964662", nombre: "JOSELYN ROXANA", apellido: "ORTIZ MARTÍNEZ" },
           { no: 20, nie: "20116635", nombre: "ROSIBEL", apellido: "PEREZ JACINTO" },
-          { no: 21, nie: "19964672", nombre: "ISAÍAS ARMANDO", apellido: "PÉREZ DEODANES" },
-          { no: 22, nie: "20116666", nombre: "DORIS ESTEFANNY", apellido: "VASQUEZ BENITES" },
-          { no: 23, nie: "20116669", nombre: "NELSON ANTONIO", apellido: "VASQUEZ MARTINEZ" },
-          { no: 24, nie: "20116683", nombre: "SERGIO JAVIER", apellido: "VENITES RODRIGUEZ" }
+          // { no: 21, nie: "19964672", nombre: "ISAÍAS ARMANDO", apellido: "PÉREZ DEODANES" }, // ELIMINADO - Retirado de matrícula
+          { no: 21, nie: "20116666", nombre: "DORIS ESTEFANNY", apellido: "VASQUEZ BENITES" }, // Reenumerado
+          { no: 22, nie: "20116669", nombre: "NELSON ANTONIO", apellido: "VASQUEZ MARTINEZ" }, // Reenumerado
+          { no: 23, nie: "20116683", nombre: "SERGIO JAVIER", apellido: "VENITES RODRIGUEZ" }  // Reenumerado
         ],
         
         reasons: [
@@ -1646,8 +1648,6 @@
           modals.close('modalEstudiante');
           validator.showError('val-nombre', false);
           notifications.success(`${student.apellido}, ${student.nombre} seleccionado`, 'Estudiante');
-          
-          this.saveToHistory();
         }
       };
       
